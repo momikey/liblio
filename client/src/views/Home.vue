@@ -1,18 +1,23 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="home columns">
+    <div class="column is-two-thirds">
+      <img alt="Vue logo" src="../assets/logo.png">
+      <p>We'll put posts and things like that over here</p>
+    </div>
+
+    <div class="column is-one-third">
+      <creator-panel />
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import CreatorPanel from '@/components/CreatorPanel.vue'
 
 export default {
   name: 'home',
   components: {
-    HelloWorld
+    CreatorPanel
   }
 }
 </script>
