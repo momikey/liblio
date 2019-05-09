@@ -9,6 +9,13 @@
 </template>
 
 <style lang="scss">
+@import "~bulma/sass/utilities/_all";
+
+/* custom styles go here */
+
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
