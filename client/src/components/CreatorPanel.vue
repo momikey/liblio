@@ -19,13 +19,36 @@
                     </div>
                 </div>
             </div>
+
+            <div class="level">
+                <!-- User tags -->
+                <div class="level-item">
+                    <b-tag rounded
+                        v-for="tag in tags" :key="tag.key">
+                        <router-link :to="uriForTag(tag.key)">{{ tag.value }}</router-link>
+                    </b-tag>
+                </div>
+            </div>
         </div>
     </section>
 </template>
 
 <script>
 export default {
-    
+    data () {
+        return {
+            tags: [
+                { key: 'test', value: "Tester" },
+                { key: 'author', value: "Author" }
+            ]
+        }
+    },
+
+    methods: {
+        uriForTag (key) {
+            return `tag/${key}`;
+        }
+    }
 }
 </script>
 
