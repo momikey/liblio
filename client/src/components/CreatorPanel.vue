@@ -44,6 +44,10 @@ export default {
         }
     },
 
+    props: [
+        'user'
+    ],
+
     methods: {
         uriForTag (key) {
             return `tag/${key}`;

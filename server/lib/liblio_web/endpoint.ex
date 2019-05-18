@@ -42,5 +42,7 @@ defmodule LiblioWeb.Endpoint do
     key: "_liblio_key",
     signing_salt: "eB8xYLMU"
 
+  plug Corsica, origins: "*"
+
   plug LiblioWeb.Router
 end
