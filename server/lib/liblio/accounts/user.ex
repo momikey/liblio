@@ -15,6 +15,8 @@ defmodule Liblio.Accounts.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:shortname, :longname, :description, :uri])
-    |> validate_required([:shortname, :longname, :description, :uri])
+    |> validate_required([:shortname])
+    |> validate_length(:shortname, min: 2)
+    |> validate_length(:shortname, max: 64)
   end
 end

@@ -17,6 +17,8 @@ defmodule LiblioWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    # Remove this later, once we're sure everything's working right
+    resources "/logins", LoginController
   end
 
   scope "/api", LiblioWeb do
@@ -24,9 +26,4 @@ defmodule LiblioWeb.Router do
   
     resources "/users", UserController, except: [:new, :edit]
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", LiblioWeb do
-  #   pipe_through :api
-  # end
 end
