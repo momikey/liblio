@@ -1,9 +1,6 @@
 <template>
   <div class="home columns">
     <div class="column is-two-thirds">
-      <img alt="Vue logo" src="../assets/logo.png">
-      <p>We'll put posts and things like that over here</p>
-
       <!-- exmaple post -->
       <creator-post-card
         :post="testPost"
@@ -42,16 +39,16 @@ export default {
   },
 
   mounted () {
-    this.$http.get('http://localhost:4000/api/users')
-      .then(response => {
-        return response.json();
-      })
-      .then(json => {
-        console.log(json);
-      })
-      .catch(response => {
-        console.log(`Error: ${response.body}`);
-      })
+    // this.$http.get('http://localhost:4000/api/users')
+    //   .then(response => {
+    //     return response.json();
+    //   })
+    //   .then(json => {
+    //     console.log(json);
+    //   })
+    //   .catch(response => {
+    //     console.log(`Error: ${response.body}`);
+    //   })
   }
 }
 </script>
