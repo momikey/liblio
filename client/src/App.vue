@@ -2,7 +2,7 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/directory">Users</router-link>
     </div>
     <router-view/>
   </div>
@@ -35,7 +35,7 @@
   }
 }
 
-.home.columns {
+.columns {
   padding-left: 24px;
   padding-right: 24px;
 }
