@@ -1,6 +1,9 @@
 <template>
   <div class="home columns">
     <div class="column is-two-thirds">
+      <!-- example post composer -->
+      <post-composer />
+
       <!-- exmaple post -->
       <creator-post-card
         :post="testPost"
@@ -16,13 +19,15 @@
 <script>
 import CreatorPanel from '@/components/CreatorPanel.vue'
 import CreatorPostCard from '@/components/CreatorPostCard.vue'
+import PostComposer from '@/components/PostComposer.vue'
 
 export default {
   name: 'home',
 
   components: {
     CreatorPanel,
-    CreatorPostCard
+    CreatorPostCard,
+    PostComposer
   },
 
   data () {
