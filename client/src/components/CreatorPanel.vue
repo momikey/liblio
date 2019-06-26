@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import { uriForTag } from '@/modules/uri';
+    
 export default {
     data () {
         return {
@@ -49,9 +51,7 @@ export default {
     ],
 
     methods: {
-        uriForTag (key) {
-            return `tag/${key}`;
-        }
+        uriForTag
     }
 }
 </script>
