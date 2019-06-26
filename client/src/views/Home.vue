@@ -54,13 +54,16 @@ export default {
         title: 'My test book',
         image: null,
         url: 'https://example.com/my-test-book',
-        tags: ['test', 'book'],
+        tags: [
+          { key: 'test', value: "Test" },
+          { key: 'book', value: "Book" }
+        ],
         description: `
           <p>
           This is a test work. This one is intended to be a book, but others could
           be pictures, illustrations, music, or anything creative.
           </p>
-          
+
           <p>
           Make a bunch of text so your work stands out.
           </p>

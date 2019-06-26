@@ -1,5 +1,5 @@
 <template>
-    <section class="card">
+    <section class="card work-info-card">
         <!-- Work title -->
         <header class="card-header">
             <p class="card-header-title is-centered title is-4">
@@ -19,6 +19,13 @@
             <div class="container is-fluid">
                 <!-- Description -->
                 <div class="work-description" v-html="description" />
+
+                <!-- URL -->
+                <div class="work-url">
+                    <hr />
+                    <a :href="url">Check it out!</a>
+                    <hr />
+                </div>
 
                 <!-- Tags -->
                 <div class="level">
