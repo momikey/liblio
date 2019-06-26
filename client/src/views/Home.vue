@@ -8,6 +8,15 @@
       <creator-post-card
         :post="testPost"
       />
+
+      <!-- example work -->
+      <work-info-card
+        :title="testWork.title"
+        :description="testWork.description"
+        :url="testWork.url"
+        :image="testWork.image"
+        :tags="testWork.tags"
+      />
     </div>
 
     <div class="column is-one-third">
@@ -20,6 +29,7 @@
 import CreatorPanel from '@/components/CreatorPanel.vue'
 import CreatorPostCard from '@/components/CreatorPostCard.vue'
 import PostComposer from '@/components/PostComposer.vue'
+import WorkInfoCard from '@/components/WorkInfoCard.vue'
 
 export default {
   name: 'home',
@@ -27,7 +37,8 @@ export default {
   components: {
     CreatorPanel,
     CreatorPostCard,
-    PostComposer
+    PostComposer,
+    WorkInfoCard
   },
 
   data () {
@@ -37,6 +48,23 @@ export default {
         title: "This is a test",
         content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
          Phasellus nec iaculis mauris.`,
+      },
+
+      testWork: {
+        title: 'My test book',
+        image: null,
+        url: 'https://example.com/my-test-book',
+        tags: ['test', 'book'],
+        description: `
+          <p>
+          This is a test work. This one is intended to be a book, but others could
+          be pictures, illustrations, music, or anything creative.
+          </p>
+          
+          <p>
+          Make a bunch of text so your work stands out.
+          </p>
+        `,
       },
 
       testUser: null,
