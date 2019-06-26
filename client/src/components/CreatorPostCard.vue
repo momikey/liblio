@@ -1,5 +1,5 @@
 <template>
-    <section class="card">
+    <section class="card post-card">
         <!-- Post title -->
         <header class="card-header">
             <p class="card-header-title">
@@ -58,5 +58,9 @@ export default {
 <style lang="scss">
     .liblio-post-author {
         flex-grow: 0;
+    }
+
+    .post-card {
+        margin-bottom: 1rem;
     }
 </style>
