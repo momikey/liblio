@@ -28,21 +28,17 @@
                 </div>
 
                 <!-- Tags -->
-                <div class="level">
-                    <div class="level-item">
-                        <b-tag rounded
-                            v-for="tag in tags" :key="tag.key">
-                            <router-link :to="uriForTag(tag.key)">{{ tag.value }}</router-link>
-                        </b-tag>
-                    </div>
-                </div>
+                <tag-list
+                    :tags="tags"
+                    align="left"
+                />
             </div>
         </div>
     </section>
 </template>
 
 <script>
-import { uriForTag } from "@/modules/uri";
+import TagList from "@/components/TagList.vue"
 
 export default {
     data () {
@@ -59,8 +55,8 @@ export default {
         'tags'
     ],
 
-    methods: {
-        uriForTag
+    components: {
+        TagList
     }
 }
 

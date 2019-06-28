@@ -20,21 +20,16 @@
                 </div>
             </div>
 
-            <div class="level">
-                <!-- User tags -->
-                <div class="level-item">
-                    <b-tag rounded
-                        v-for="tag in tags" :key="tag.key">
-                        <router-link :to="uriForTag(tag.key)">{{ tag.value }}</router-link>
-                    </b-tag>
-                </div>
-            </div>
+            <!-- User tags - this component is already in a level -->
+            <tag-list
+                :tags="tags"
+            />
         </div>
     </section>
 </template>
 
 <script>
-import { uriForTag } from '@/modules/uri';
+import TagList from "@/components/TagList.vue";
     
 export default {
     data () {
@@ -50,8 +45,8 @@ export default {
         'user'
     ],
 
-    methods: {
-        uriForTag
+    components: {
+        TagList
     }
 }
 </script>
