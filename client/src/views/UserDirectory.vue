@@ -15,21 +15,26 @@
 
 import UserDirectoryEntry from "@/components/UserDirectoryEntry.vue";
 
+import { getAllUsers } from "@/modules/users";
+
 export default {
     data () {
         return {
-            users: [
-                { id: 1, name: "Test", address: "@test@example.com" },
-                { id: 42, name: "Other", address: "@other@example.invalid" },
-                { id: 83, name: "Secret", address: "@secret@fbi.invalid", private: true }
-            ]
         }
     },
 
     computed: {
+        users () {
+            return getAllUsers(null);
+        },
+
         visibleUsers () {
             return this.users.filter(u => !u.private);
         }
+    },
+
+    methods: {
+        getAllUsers
     },
 
     components: {
