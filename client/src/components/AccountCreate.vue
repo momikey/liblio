@@ -37,6 +37,24 @@
                 field="value"
             />
         </b-field>
+
+        <b-field horizontal>
+            <p class="control">
+                <b-button class="is-primary"
+                    @click="onCreateAccount"
+                >
+                    {{ labels.create }}
+                </b-button>
+            </p>
+
+            <p class="control">
+                <b-button
+                    @click="onClear"
+                >
+                    {{ labels.clear }}
+                </b-button>
+            </p>
+        </b-field>
     </section>
 </template>
 
@@ -59,7 +77,10 @@ export default {
                 rolePlaceholder: "What kind of creator are you?",
                 bio: "Description",
                 bioPlaceholder: "Tell us a little about yourself",
-                tags: "Tags"
+                tags: "Tags",
+
+                create: "Create account",
+                clear: "Clear"
             },
 
             // Some test data to show off the component
@@ -95,6 +116,16 @@ export default {
 
                 ]
             }
+        }
+    },
+
+    methods: {
+        onCreateAccount () {
+            console.log("Creating account: ", this.account);
+        },
+
+        onClear () {
+
         }
     },
 
