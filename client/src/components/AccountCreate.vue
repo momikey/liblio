@@ -33,8 +33,11 @@
         <b-field horizontal :label="labels.tags">
             <b-taginput
                 v-model="account.tags"
-                :data="availableTags"
+                :data="filteredTags"
+                autocomplete
                 field="value"
+                :placeholder="labels.tagsPlaceholder"
+                @typing="getFilteredTags"
             />
         </b-field>
 
@@ -78,10 +81,14 @@ export default {
                 bio: "Description",
                 bioPlaceholder: "Tell us a little about yourself",
                 tags: "Tags",
+                tagsPlaceholder: "Add some tags to help others find your work",
 
                 create: "Create account",
                 clear: "Clear"
             },
+            
+            // Backing field for filtered tags list
+            filteredTags: [],
 
             // Some test data to show off the component
             creatorRoles: [
@@ -91,6 +98,7 @@ export default {
                 "Photographer"
             ],
 
+            // Some example tags
             creatorTags: {
                 Artist: [
                     { key: 'manga', value: "Manga" },
@@ -113,7 +121,7 @@ export default {
                 ],
 
                 any: [
-
+                    { key: 'bot', value: "Bot" }
                 ]
             }
         }
@@ -126,13 +134,21 @@ export default {
 
         onClear () {
 
+        },
+
+        getFilteredTags (text) {
+            this.filteredTags = this.availableTags.filter(tag => 
+                tag.value.toLowerCase()
+                    .indexOf(text.toLowerCase()) >= 0
+                // or use .startswith() if we want to do that
+            );
         }
     },
 
     computed: {
         availableTags () {
             if (!this.account.role) {
-                return []
+                return this.creatorTags["any"];
             } else {
                 return this.creatorTags[this.account.role].concat(this.creatorTags["any"]).sort(
                     (a, b) => {
@@ -147,6 +163,10 @@ export default {
                 );
             }
         }
+    },
+
+    mounted () {
+        this.filteredTags = this.availableTags;
     }
 }
 </script>
