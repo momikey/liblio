@@ -18,6 +18,10 @@
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
 
+.has-text-primary-inverted {
+  color: findColorInvert($primary);
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
