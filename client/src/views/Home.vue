@@ -9,6 +9,11 @@
         :post="testPost"
       />
 
+      <!-- example reply -->
+      <comment-card
+        :post="testReply"
+      />
+
       <!-- example work -->
       <work-info-card
         :title="testWork.title"
@@ -28,6 +33,7 @@
 <script>
 import CreatorPanel from '@/components/CreatorPanel.vue'
 import CreatorPostCard from '@/components/CreatorPostCard.vue'
+import CommentCard from '@/components/CommentCard.vue'
 import PostComposer from '@/components/PostComposer.vue'
 import WorkInfoCard from '@/components/WorkInfoCard.vue'
 
@@ -37,6 +43,7 @@ export default {
   components: {
     CreatorPanel,
     CreatorPostCard,
+    CommentCard,
     PostComposer,
     WorkInfoCard
   },
@@ -48,6 +55,11 @@ export default {
         title: "This is a test",
         content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
          Phasellus nec iaculis mauris.`,
+      },
+
+      testReply: {
+        author: 'Somebody else',
+        content: "You said exactly what I wanted to hear."
       },
 
       testWork: {
