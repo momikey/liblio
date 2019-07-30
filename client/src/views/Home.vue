@@ -4,14 +4,10 @@
       <!-- example post composer -->
       <post-composer />
 
-      <!-- exmaple post -->
-      <creator-post-card
-        :post="testPost"
-      />
-
-      <!-- example reply -->
-      <comment-card
-        :post="testReply"
+      <!-- example thread -->
+      <post-thread
+        :parent="testPost"
+        :children="[testReply]"
       />
 
       <!-- example work -->
@@ -34,6 +30,7 @@
 import CreatorPanel from '@/components/CreatorPanel.vue'
 import CreatorPostCard from '@/components/CreatorPostCard.vue'
 import CommentCard from '@/components/CommentCard.vue'
+import PostThread from '@/components/PostThread.vue'
 import PostComposer from '@/components/PostComposer.vue'
 import WorkInfoCard from '@/components/WorkInfoCard.vue'
 
@@ -44,6 +41,7 @@ export default {
     CreatorPanel,
     CreatorPostCard,
     CommentCard,
+    PostThread,
     PostComposer,
     WorkInfoCard
   },

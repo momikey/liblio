@@ -49,7 +49,7 @@ export default {
 </script>
 
 <style lang="scss">
-    .comment-card {
-        margin-bottom: 0.5rem;
-    }
+    // .comment-card {
+    //     margin-bottom: 0.5rem;
+    // }
 </style>

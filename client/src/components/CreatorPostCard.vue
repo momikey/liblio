@@ -1,12 +1,12 @@
 <template>
     <section class="card post-card">
         <!-- Post title -->
-        <header class="card-header">
-            <p class="card-header-title">
+        <header class="card-header has-background-primary">
+            <p class="card-header-title has-text-primary-inverted">
                 {{ post.title }}
             </p>
 
-            <p class="card-header-title is-size-7 has-text-right liblio-post-author">
+            <p class="card-header-title is-size-7 has-text-right liblio-post-author has-text-primary-inverted">
                 {{ by(post.author) }}
             </p>
         </header>
@@ -58,9 +58,5 @@ export default {
 <style lang="scss">
     .liblio-post-author {
         flex-grow: 0;
-    }
-
-    .post-card {
-        margin-bottom: 1rem;
     }
 </style>
