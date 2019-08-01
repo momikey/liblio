@@ -1,17 +1,10 @@
 <template>
     <section class="composer card">
         <div class="card-content">
-            <b-field horizontal :label="labels.subject">
-                <b-input
-                    v-model="post.subject"
-                    :placeholder="labels.placeholders.subject"
-                />
-            </b-field>
-
-            <b-field horizontal :label="labels.message">
+            <b-field>
                 <b-input
                     v-model="post.body"
-                    :placeholder="labels.placeholders.message"
+                    :placeholder="labels.message"
                     type="textarea"
                 />
             </b-field>
@@ -35,25 +28,16 @@
 export default {
     data () {
         return {
-            // Post data
             post: {
-                subject: '',
                 body: '',
-                tags: []
             },
 
-            // Labels (TODO: Localization)
+            // Placeholders (replace with localized strings later)
             labels: {
-                subject: "Subject",
-                message: "Message",
-
-                placeholders: {
-                    subject: "Announcing...",
-                    message: "This is what I'm doing..."
-                },
+                message: "What's on your mind?",
 
                 errors: {
-                    noPostBody: "You must type a message"
+                    commentEmpty: "Your comment cannot be blank",
                 }
             }
         }
@@ -62,14 +46,13 @@ export default {
     methods: {
         onPost () {
             if (this.post.body) {
-                console.log(`Posting with subject ${this.post.subject} and body ${this.post.body}`);
+                console.log(`Posting comment ${this.post.body}`);
             } else {
-                this.notifyError(this.labels.errors.noPostBody);
+                this.notifyError(this.labels.errors.commentEmpty);
             }
         },
 
         onClear () {
-            this.post.subject = '';
             this.post.body = '';
         },
 
@@ -86,11 +69,5 @@ export default {
 </script>
 
 <style lang="scss">
-    .composer {
-        margin-bottom: 1rem;
-    }
 
-    .composer-actions {
-        padding-bottom: 2rem;
-    }
 </style>

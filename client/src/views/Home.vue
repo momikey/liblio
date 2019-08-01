@@ -4,6 +4,9 @@
       <!-- example post composer -->
       <post-composer />
 
+      <!-- example comment composer -->
+      <comment-composer />
+
       <!-- example thread -->
       <post-thread
         :parent="testPost"
@@ -33,6 +36,7 @@ import CommentCard from '@/components/CommentCard.vue'
 import PostThread from '@/components/PostThread.vue'
 import PostComposer from '@/components/PostComposer.vue'
 import WorkInfoCard from '@/components/WorkInfoCard.vue'
+import CommentComposer from '@/components/CommentComposer.vue'
 
 export default {
   name: 'home',
@@ -43,7 +47,8 @@ export default {
     CommentCard,
     PostThread,
     PostComposer,
-    WorkInfoCard
+    WorkInfoCard,
+    CommentComposer
   },
 
   data () {
