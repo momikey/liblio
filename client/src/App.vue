@@ -14,6 +14,8 @@
 @import "~bulma/sass/utilities/_all";
 
 /* custom styles go here */
+$mdi-font-path: "~@mdi/font/fonts";
+@import "~@mdi/font/scss/materialdesignicons";
 
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
