@@ -22,13 +22,13 @@
         </div>
 
         <!-- Comment actions -->
-        <footer class="card-footer">
-            <!-- Put actions (like, etc.) here -->
-        </footer>
+        <posting-actions-footer />
     </section>    
 </template>
 
 <script>
+import PostingActionsFooter from '@/components/PostingActionsFooter.vue';
+
 export default {
     data () {
         return {
@@ -44,12 +44,14 @@ export default {
         by (author) {
             return `by ${author}`;
         }
+    },
+
+    components: {
+        PostingActionsFooter
     }
 }
 </script>
 
 <style lang="scss">
-    // .comment-card {
-    //     margin-bottom: 0.5rem;
-    // }
+
 </style>

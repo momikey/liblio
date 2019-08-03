@@ -29,13 +29,13 @@
         </div>
 
         <!-- Post actions -->
-        <footer class="card-footer">
-            <!-- Put actions (like, reply, etc.) here -->
-        </footer>
+        <posting-actions-footer />
     </section>
 </template>
 
 <script>
+import PostingActionsFooter from '@/components/PostingActionsFooter.vue';
+
 export default {
     data () {
         return {
@@ -51,6 +51,10 @@ export default {
         by (author) {
             return `by ${author}`
         }
+    },
+
+    components: {
+        PostingActionsFooter
     }
 }
 </script>

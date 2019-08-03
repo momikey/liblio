@@ -11,8 +11,12 @@
 
             <div class="composer-actions">
                 <div class="is-pulled-right">
-                    <b-button @click="onPost" class="" :disabled="!post.body.length">
-                        Post
+                    <b-button
+                        @click="onPost"
+                        :disabled="!post.body.length"
+                        icon-left="email"
+                    >
+                        Submit
                     </b-button>
 
                     <b-button @click="onClear" class="">
