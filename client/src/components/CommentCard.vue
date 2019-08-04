@@ -22,17 +22,27 @@
         </div>
 
         <!-- Comment actions -->
-        <posting-actions-footer />
+        <posting-actions-footer
+            @action-reply="isReplying = !isReplying"
+        />
+
+        <!-- Reply box -->
+        <div v-if="isReplying">
+            <comment-composer
+                @post-cancel="isReplying = false"
+            />
+        </div>
     </section>    
 </template>
 
 <script>
 import PostingActionsFooter from '@/components/PostingActionsFooter.vue';
+import CommentComposer from '@/components/CommentComposer.vue';
 
 export default {
     data () {
         return {
-
+            isReplying: false,
         }
     },
 
@@ -47,7 +57,8 @@ export default {
     },
 
     components: {
-        PostingActionsFooter
+        PostingActionsFooter,
+        CommentComposer
     }
 }
 </script>

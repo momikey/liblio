@@ -19,8 +19,8 @@
                         Submit
                     </b-button>
 
-                    <b-button @click="onClear" class="">
-                        Clear
+                    <b-button @click="onCancel" class="">
+                        Cancel
                     </b-button>
                 </div>
             </div>
@@ -56,8 +56,9 @@ export default {
             }
         },
 
-        onClear () {
+        onCancel () {
             this.post.body = '';
+            this.$emit('post-cancel');
         },
 
         notifyError (error) {
