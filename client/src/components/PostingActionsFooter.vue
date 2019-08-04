@@ -60,7 +60,9 @@ export default {
 
 <style lang="scss">
     .comment-actions button {
-        padding-left: 2rem;
-        padding-right: 2rem;
+        margin-left: 2rem;
+        margin-right: 2rem;
+        padding-left: 3rem;
+        padding-right: 3rem;
     }
 </style>
