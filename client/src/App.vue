@@ -18,6 +18,7 @@ $mdi-font-path: "~@mdi/font/fonts";
 @import "~@mdi/font/scss/materialdesignicons";
 
 @import "~bulma";
+@import "~bulma-badge/src/sass/index.sass";
 @import "~buefy/src/scss/buefy";
 
 .has-text-primary-inverted {
