@@ -1,14 +1,21 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/directory">Users</router-link> |
-      <router-link to="/new-account">New Account</router-link>
-    </div>
-    <router-view/>
+    <navigation-bar />
+
+    <router-view />
   </div>
 </template>
+
+<script>
+import NavigationBar from "@/components/NavigationBar.vue";
+
+export default {
+  components: {
+    NavigationBar
+  }
+}
+</script>
+
 
 <style lang="scss">
 @import "~bulma/sass/utilities/_all";
