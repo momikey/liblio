@@ -19,7 +19,7 @@
         </template>
 
         <template slot="end">
-            <b-navbar-item>
+            <b-navbar-item tag="div">
                 <b-dropdown
                     position="is-bottom-left"
                 >
@@ -34,6 +34,16 @@
                             />
                         </b-tooltip>
                     </a>
+
+                    <b-dropdown-item
+                        custom
+                        :focusable="false"
+                        paddingless
+                    >
+                        <notifications-list
+                            :notifications="notifications"
+                        />
+                    </b-dropdown-item>
                 </b-dropdown>
             </b-navbar-item>
         </template>
@@ -41,9 +51,13 @@
 </template>
 
 <script>
+import NotificationsList from '@/components/NotificationsList.vue';
+
 export default {
     data () {
         return {
+            notifications: this.$store.state.notifications,
+
             labels: {
                 notifications: "Notifications",
             }
@@ -52,8 +66,7 @@ export default {
 
     computed: {
         unreadNotifications () {
-            // TODO API call, etc.
-            return 0;
+            return this.notifications.filter(n => n.unread).length
         },
 
         unreadFormatted () {
@@ -67,6 +80,10 @@ export default {
                 return unread;
             }
         }
+    },
+
+    components: {
+        NotificationsList
     }
 }
 </script>

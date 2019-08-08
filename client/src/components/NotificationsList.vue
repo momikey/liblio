@@ -1,7 +1,7 @@
 <template>
     <section class="notifications-list">
         <b-message :title="labels.title" :closable="false"
-            type="is-primary" :active="active"
+            type="is-primary" :active="active" class="notifications-header"
         >
             <div v-for="note in notifications" :key="note.id"
                 class="card"
@@ -13,7 +13,7 @@
                 </div>
 
                 <div class="card-content">
-                    {{ note.text }}
+                    <p class="notification-body">{{ note.text }}</p>
                 </div>
             </div>
         </b-message>
@@ -45,5 +45,15 @@ export default {
 </script>
 
 <style lang="scss">
+    .notifications-header header p {
+        margin: auto;
+    }
 
+    .notifications-header .message-body {
+        padding: 0;
+    }
+
+    .notification-body {
+        font-weight: normal;
+    }
 </style>
