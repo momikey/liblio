@@ -12,7 +12,6 @@
     "buefy": "^0.8.2",
     "bulma-badge": "^3.0.1",
     "core-js": "^2.6.9",
-    "phoenix": "^1.4.9",
     "vue": "^2.6.10",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.1.1",
