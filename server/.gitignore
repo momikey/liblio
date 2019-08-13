@@ -1,3 +1,10 @@
 # Ignore Python extras
 venv/
 __pycache__/
+*.pyc
+dist/
+build/
+*.egg-info/
+
+# Flask uses this for, e.g., production secrets
+instance/
