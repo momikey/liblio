@@ -3,10 +3,14 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 
 def create_app():
     # Create the app
     app = Flask(__name__, instance_relative_config=True)
+
+    # CORS (maybe make this per-route or something later on)
+    CORS(app)
 
     # Development data
     app.config.from_mapping(
