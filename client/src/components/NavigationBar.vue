@@ -19,6 +19,10 @@
         </template>
 
         <template slot="end">
+            <b-navbar-item class="testing">
+                {{ testingText }}
+            </b-navbar-item>
+
             <b-navbar-item tag="div">
                 <b-dropdown
                     position="is-bottom-left"
@@ -51,12 +55,16 @@
 </template>
 
 <script>
+import axios from 'axios'; 
+
 import NotificationsList from '@/components/NotificationsList.vue';
 
 export default {
     data () {
         return {
             notifications: this.$store.state.notifications,
+
+            testingText: "",
 
             labels: {
                 notifications: "Notifications",
@@ -80,6 +88,16 @@ export default {
                 return unread;
             }
         }
+    },
+
+    methods: {
+        async retrieveSampleText () {
+            return axios.get("/hello")
+        }
+    },
+
+    async mounted () {
+        this.testingText = (await this.retrieveSampleText()).data;
     },
 
     components: {

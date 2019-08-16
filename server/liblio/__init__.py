@@ -43,7 +43,7 @@ def create_app():
     migrate = Migrate(app, db)
 
     # Routes (we'll factor these out later)
-    @app.route("/")
+    @app.route("/hello")
     def home():
         return "Hello, world!"
     
