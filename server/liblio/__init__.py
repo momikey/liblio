@@ -8,6 +8,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 def create_app():
+    """
+    Create the Liblio server object as a Flask application.
+    """
+
     # Create the app
     app = Flask(__name__, instance_relative_config=True)
 
@@ -34,7 +38,8 @@ def create_app():
         pass
     
     # Database and migrations
-    db = SQLAlchemy(app)
+    from .models import db
+    db.init_app(app)
     migrate = Migrate(app, db)
 
     # Routes (we'll factor these out later)
