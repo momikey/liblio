@@ -6,6 +6,13 @@ from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_executor import Executor
+
+# Define extensions here, so we can access them easily
+from .models import db
+cors = CORS()
+migrate = Migrate()
+executor = Executor()
 
 def create_app():
     """
@@ -16,7 +23,7 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
     # CORS (maybe make this per-route or something later on)
-    CORS(app)
+    cors.init_app(app)
 
     # Development data
     app.config.from_mapping(
@@ -38,9 +45,12 @@ def create_app():
         pass
     
     # Database and migrations
-    from .models import db
+    # from .models import db
     db.init_app(app)
-    migrate = Migrate(app, db)
+    migrate.init_app(app, db)
+
+    # Executor for futures
+    executor.init_app(app)
 
     # Routes (we'll factor these out later)
     @app.route("/hello")
