@@ -2,11 +2,13 @@
 
 import os
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_executor import Executor
+
+from .error import APIError
 
 # Define extensions here, so we can access them easily
 from .models import db
@@ -33,6 +35,7 @@ def create_app():
     # Other config stuff goes here
     app.config.from_pyfile('config.py', silent=True)
 
+    # Different configurations for production and development modes
     if app.env == 'production':
         app.config.from_pyfile('prod.py', silent=True)
     else:
@@ -52,9 +55,25 @@ def create_app():
     # Executor for futures
     executor.init_app(app)
 
+    # Blueprints for API
+    from .api import authentication
+    app.register_blueprint(authentication.blueprint)
+
+    # Register our custom error handler
+    @app.errorhandler(APIError)
+    def handle_api_error(error):
+        response = jsonify(error.to_dict())
+        response.status_code = error.status_code
+        return response
+
     # Routes (we'll factor these out later)
     @app.route("/hello")
     def home():
         return "Hello, world!"
+
+    # Testing route to show all routes
+    @app.route("/routes")
+    def routes():
+        return jsonify(repr(app.url_map))
     
     return app
