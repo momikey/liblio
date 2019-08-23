@@ -1,8 +1,9 @@
 ### Authentication, including login, account creation, etc.
 
 from flask import Blueprint, request, jsonify, abort
+from webargs import fields, validate
+from webargs.flaskparser import use_args
 from werkzeug.security import check_password_hash, generate_password_hash
-from werkzeug.exceptions import MethodNotAllowed
 
 from liblio import db
 from liblio.error import APIError
@@ -12,19 +13,28 @@ BLUEPRINT_PATH="{api}/auth".format(api=API_PATH)
 
 blueprint = Blueprint('auth', __name__, url_prefix=BLUEPRINT_PATH)
 
-@blueprint.route('/create-account', methods=('GET', 'POST'))
-def create_account():
+### Request schemas
+
+request_schemas = {
+    'create_account': {
+        'username': fields.Str(required=True),
+        'password': fields.Str(validate=validate.Length(min=6))
+    }
+}
+
+### Routes
+
+@blueprint.route('/create-account', methods=('POST',))
+@use_args(request_schemas['create_account'])
+def create_account(args):
+    "Create a new account on this server."
     if request.method == 'POST':
-        acct = request.get_json()
+        username = args['username']
+        password = args['password']
 
-        username = acct.username
-        password = acct.password
+        return jsonify({'username': username, 'hash': generate_password_hash(password)}), 201
 
-        if not username:
-            abort(400)
-        if not password:
-            abort(400)
-
-    else:
-        #raise APIError("POST to this endpoint to create an account", 405)
-        raise MethodNotAllowed(['POST'])
+@blueprint.route('/create-account', methods=('GET',))
+def create_account_get():
+    "This endpoint does not support GET, so send a formatted response."
+    raise APIError(405, "POST to this endpoint to create an account")

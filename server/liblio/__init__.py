@@ -8,6 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_executor import Executor
 
+from werkzeug.exceptions import HTTPException
+
 from .error import APIError
 
 # Define extensions here, so we can access them easily
@@ -63,8 +65,16 @@ def create_app():
     @app.errorhandler(APIError)
     def handle_api_error(error):
         response = jsonify(error.to_dict())
-        response.status_code = error.status_code
-        return response
+        return response, error.status_code
+
+    # Convert webargs errors to API
+    @app.errorhandler(422)
+    @app.errorhandler(400)
+    def convert_api_error(error):
+        headers = error.data.get('headers', None)
+        messages = error.data.get('messages', ["Invalid request"])
+
+        return handle_api_error(APIError(error.code, "Validation failure", payload={"errors": messages}))
 
     # Routes (we'll factor these out later)
     @app.route("/hello")
