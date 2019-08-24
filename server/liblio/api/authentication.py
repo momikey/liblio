@@ -7,6 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from liblio import db
 from liblio.error import APIError
+from liblio.models import Login
 from . import API_PATH
 
 BLUEPRINT_PATH="{api}/auth".format(api=API_PATH)
