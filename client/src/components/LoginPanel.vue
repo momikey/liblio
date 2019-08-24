@@ -19,8 +19,7 @@
 
             <b-field class="level">
                 <b-button
-                    class="level-item login-panel-button"
-                    type="is-primary"
+                    class="level-item login-panel-button is-primary"
                     @click="onLogin"
                 >
                     {{ labels.loginButton }}
