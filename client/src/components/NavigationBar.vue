@@ -92,7 +92,11 @@ export default {
 
     methods: {
         async retrieveSampleText () {
-            return axios.get("/hello")
+            try {
+                return axios.get("/hello")
+            } catch (e) {
+                console.log("Unable to access server: ", e);
+            }
         }
     },
 
