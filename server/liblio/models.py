@@ -20,8 +20,12 @@ class Login(db.Model):
     password = db.Column(db.Text, nullable=False)
 
     # The eamil address associated with this login
-    # TODO: Do we make this unique? Pros: better security/moderation; Cons: can lose accounts
+    # Note: We make this unique to facilitate lookups, password resets, etc.
     email = db.Column(db.Text, unique=True, nullable=False)
+
+    # Last login time
+    # We keep this for stats purposes, nothing more.
+    last_login = db.Column(db.DateTime, nullable=False)
 
     def __repr__(self):
         return "<Login {self.username} / {self.email}>".format(self=self)
