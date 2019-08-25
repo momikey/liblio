@@ -11,12 +11,6 @@
                 />
             </b-field>
 
-            <b-field horizontal :label="labels.displayName">
-                <b-input name="displayName" expanded
-                    v-model="account.displayName"
-                />
-            </b-field>
-
             <b-field horizontal :label="labels.email">
                 <b-input name="email" expanded required
                     type="email"
@@ -67,7 +61,6 @@ export default {
         return {
             account: {
                 username: '',
-                displayName: '',
                 email: '',
                 password: ''
             },
@@ -77,7 +70,6 @@ export default {
             labels: {
                 header: "Create your account",
                 username: "Username",
-                displayName: "Display name",
                 email: "Email address",
                 password: "Password",
                 retype: "Retype password",

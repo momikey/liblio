@@ -1,15 +1,24 @@
 <template>
     <!--
         Acocunt creation steps:
-        1. Create username/set password
-        2. Set up profile
-        3. Getting started (tutorial, etc.)
+        1. ToS, rules, etc.
+        2. Create username/set password
+        3. Set up profile
+        4. Getting started (tutorial, etc.)
     -->
     <section class="account-create-wizard">
         <b-steps
             v-model="currentStep"
             :hasNavigation="false"
         >
+            <b-step-item>
+                <!-- Show the server's rules and get the user's agreement -->
+                <account-create-rules
+                    @next-step="onAcceptRules"
+                    @cancel-step="onCancelStep"
+                />
+            </b-step-item>
+
             <b-step-item>
                 <!-- Create an account on this server -->
                 <account-create-details
@@ -20,17 +29,27 @@
 
             <b-step-item>
                 <!-- Set up your profile -->
+                <account-create-profile
+                    @next-step="onCreateProfileStep"
+                    @previous-step="onCancelStep"
+                />
             </b-step-item>
 
             <b-step-item>
                 <!-- Do any post-creation tasks, such as showing a tutorial or admin message -->
+                <account-create-welcome
+                    @next-step="onCreationComplete"
+                />
             </b-step-item>
         </b-steps>
     </section>
 </template>
 
 <script>
+import AccountCreateRules from '@/components/AccountCreateRules.vue';
 import AccountCreateDetails from '@/components/AccountCreateDetails.vue';
+import AccountCreateProfile from '@/components/AccountCreateProfile.vue';
+import AccountCreateWelcome from '@/components/AccountCreateWelcome.vue';
 
 export default {
     data () {
@@ -38,10 +57,20 @@ export default {
             currentStep: 0,
 
             account: null,
+            profile: null
         }
     },
 
     methods: {
+        onAcceptRules () {
+            // The user has agreed to the server's terms of use, and can
+            // now continue with the account creation process.
+            // TODO: Do we need to worry about GDPR, etc.?
+            console.log("Agreed");
+
+            ++this.currentStep;
+        },
+
         onCreateAccountStep (account) {
             // We don't actually create the account on the server in this step,
             // because the user might cancel the creation in the profile step.
@@ -53,8 +82,27 @@ export default {
             ++this.currentStep;
         },
 
+        onCreateProfileStep (profile) {
+            // After this step, we can submit the account and profile data to the server.
+            console.log(profile);
+
+            this.profile = profile;
+            ++this.currentStep;
+        },
+
+        onCreationComplete () {
+            // At this point, the user has created an account and started a profile.
+            // All that's left is a redirect to either the login page or the dashboard.
+            // Which one we use can be decided later. (TODO: Do that.)
+
+            // TODO: Make this go to the right location.
+            this.$router.push('/');
+        },
+
         onCancelStep () {
-            if (this.currentStep > 0) {
+            // "Cancel" goes back a step, but *not* to the initial page, since
+            // that's the ToS page.
+            if (this.currentStep > 1) {
                 --this.currentStep;
             } else {
                 this.$router.back();
@@ -63,7 +111,10 @@ export default {
     },
 
     components: {
-        AccountCreateDetails
+        AccountCreateRules,
+        AccountCreateDetails,
+        AccountCreateProfile,
+        AccountCreateWelcome
     }
 }
 </script>
