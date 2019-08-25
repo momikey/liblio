@@ -1,9 +1,7 @@
 <template>
-    <div class="new-account columns">
-        <div class="column is-two-thirds">
-            <account-create
-            />
-        </div>
+    <div class="new-account container">
+        <account-create
+        />
     </div>
 </template>
 
@@ -24,5 +22,7 @@ export default {
 </script>
 
 <style lang="scss">
-
+    .new-account.container {
+        max-width: 960px;
+    }
 </style>

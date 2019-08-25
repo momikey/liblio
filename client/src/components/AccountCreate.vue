@@ -4,9 +4,10 @@
         1. ToS, rules, etc.
         2. Create username/set password
         3. Set up profile
-        4. Getting started (tutorial, etc.)
+        4. Review the info
+        5. Welcome!
     -->
-    <section class="account-create-wizard">
+    <section class="account-create-wizard container">
         <b-steps
             v-model="currentStep"
             :hasNavigation="false"
@@ -36,6 +37,16 @@
             </b-step-item>
 
             <b-step-item>
+                <!-- Review your account info -->
+                <account-create-review
+                    :account="account"
+                    :profile="profile"
+                    @next-step="onAccountReviewed"
+                    @previous-step="onCancelStep"
+                />
+            </b-step-item>
+
+            <b-step-item>
                 <!-- Do any post-creation tasks, such as showing a tutorial or admin message -->
                 <account-create-welcome
                     @next-step="onCreationComplete"
@@ -49,6 +60,7 @@
 import AccountCreateRules from '@/components/AccountCreateRules.vue';
 import AccountCreateDetails from '@/components/AccountCreateDetails.vue';
 import AccountCreateProfile from '@/components/AccountCreateProfile.vue';
+import AccountCreateReview from '@/components/AccountCreateReview.vue';
 import AccountCreateWelcome from '@/components/AccountCreateWelcome.vue';
 
 export default {
@@ -76,17 +88,26 @@ export default {
             // because the user might cancel the creation in the profile step.
             // So we just save the credentials for the moment, then use them if
             // we actually do have a new account.
-            console.log(account);
 
             this.account = account;
             ++this.currentStep;
         },
 
         onCreateProfileStep (profile) {
-            // After this step, we can submit the account and profile data to the server.
-            console.log(profile);
+            // After this step, we haven't yet submitted the data to the server,
+            // because we want to give the user one last chance to review and
+            // possibly back out.
 
             this.profile = profile;
+            ++this.currentStep;
+        },
+
+        onAccountReviewed () {
+            // The user has reviewed the account and profile details, and is now
+            // submitting them to the server.
+            console.log(this.account, this.profile);
+
+            // TODO: Submit account/profile data to the server (and handle it there)
             ++this.currentStep;
         },
 
@@ -114,6 +135,7 @@ export default {
         AccountCreateRules,
         AccountCreateDetails,
         AccountCreateProfile,
+        AccountCreateReview,
         AccountCreateWelcome
     }
 }

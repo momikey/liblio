@@ -4,9 +4,7 @@
             <p class="subtitle">{{ labels.header }}</p>
 
             <b-field>
-                <!-- <b-input type="textarea" rows="5" v-model="adminMessage" readonly
-                /> -->
-                <div v-html="adminMessage" />
+                <div class="content" v-html="adminMessage" />
             </b-field>
 
             <b-field class="level">
