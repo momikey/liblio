@@ -3,6 +3,7 @@ Click==7.0
 Flask==1.1.1
 Flask-Cors==3.0.8
 Flask-Executor==0.9.3
+Flask-JWT-Extended==3.21.0
 Flask-Migrate==2.5.2
 Flask-SQLAlchemy==2.4.0
 itsdangerous==1.1.0
@@ -14,6 +15,7 @@ MarkupSafe==1.1.1
 marshmallow==3.0.1
 pkg-resources==0.0.0
 psycopg2==2.8.3
+PyJWT==1.7.1
 python-dateutil==2.8.0
 python-editor==1.0.4
 six==1.12.0

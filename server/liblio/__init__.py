@@ -7,6 +7,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_executor import Executor
+from flask_jwt_extended import JWTManager
 
 from werkzeug.exceptions import HTTPException
 
@@ -17,6 +18,7 @@ from .models import db
 cors = CORS()
 migrate = Migrate()
 executor = Executor()
+jwt = JWTManager()
 
 def create_app():
     """
@@ -30,8 +32,10 @@ def create_app():
     cors.init_app(app)
 
     # Development data
+    # This should all be changed by a file in `server/instance/`. (TODO: document that)
     app.config.from_mapping(
-        SECRET_KEY='dev'
+        SECRET_KEY='dev',
+        JWT_SECRET_KEY='secret'
     )
 
     # Other config stuff goes here
@@ -56,6 +60,9 @@ def create_app():
 
     # Executor for futures
     executor.init_app(app)
+
+    # JWT authentication
+    jwt.init_app(app)
 
     # Blueprints for API
     from .api import authentication

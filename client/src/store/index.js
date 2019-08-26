@@ -1,9 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import VuexPersistence from 'vuex-persist';
 
 import MockData from './mockdata';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
+
+const vuexStorage = new VuexPersistence({
+    storage: window.localStorage
+})
 
 const debug = process.env.NODE_ENV !== 'production'
 
@@ -16,6 +21,8 @@ const store = new Vuex.Store({
     state: {
         ...MockData
     },
+
+    plugins: [vuexStorage.plugin],
     
     strict: debug
 });
