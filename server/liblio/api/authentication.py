@@ -1,10 +1,13 @@
 ### Authentication, including login, account creation, etc.
 
+from datetime import datetime
+
 from flask import Blueprint, request, jsonify, make_response
+from flask_jwt_extended import create_access_token
 from webargs import fields, validate
 from webargs.flaskparser import use_args
 
-from liblio import db
+from liblio import db, jwt
 from liblio.error import APIError
 from liblio.models import Login
 from . import API_PATH
@@ -19,6 +22,11 @@ request_schemas = {
     'create_account': {
         'username': fields.Str(required=True),
         'email': fields.Email(required=True),
+        'password': fields.Str(validate=validate.Length(min=6))
+    },
+
+    'login': {
+        'username': fields.Str(required=True),
         'password': fields.Str(validate=validate.Length(min=6))
     }
 }
@@ -58,3 +66,27 @@ def create_account(args):
 def create_account_get():
     "This endpoint does not support GET, so send a formatted response."
     raise APIError(405, "POST to this endpoint to create an account")
+
+@blueprint.route('/login', methods=("POST",))
+@use_args(request_schemas['login'])
+def login(args):
+    "Login to this server, receiving an authentication token in response."
+
+    username = args['username']
+    password = args['password']
+
+    login = Login.query.filter_by(username=username).first()
+    if login is None or not login.check_password(password):
+        # Best security practice is to avoid telling a user whether
+        # the username or password is incorrect.
+        raise APIError(401, "Invalid username or password")
+    
+    login.last_login = datetime.now()
+    login.last_action = datetime.now()
+    db.session.add(login)
+    db.session.commit()
+
+    token = create_access_token(username)
+    return make_response(jsonify(access_token=token), 200)
+
+### TODO: Logout, including token blacklist
