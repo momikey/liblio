@@ -19,7 +19,12 @@ const store = new Vuex.Store({
 
     // Add mock data if we're in testing (this will go away eventually)
     state: {
+        debug,
         ...MockData
+    },
+
+    getters: {
+        debugMode: state => state.debug
     },
 
     plugins: [vuexStorage.plugin],

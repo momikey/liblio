@@ -16,6 +16,10 @@
             <b-navbar-item>
                 <router-link to="/new-account">New Account</router-link>
             </b-navbar-item>
+
+            <b-navbar-item v-if="isDebugMode">
+                <router-link to="/sandbox">Sandbox</router-link>
+            </b-navbar-item>
         </template>
 
         <template slot="end">
@@ -87,6 +91,10 @@ export default {
             } else {
                 return unread;
             }
+        },
+
+        isDebugMode () {
+            return this.$store.getters.debugMode;
         }
     },
 
