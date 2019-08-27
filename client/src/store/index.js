@@ -2,6 +2,8 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import VuexPersistence from 'vuex-persist';
 
+import authentication from './authentication'
+
 import MockData from './mockdata';
 
 Vue.use(Vuex);
@@ -14,7 +16,7 @@ const debug = process.env.NODE_ENV !== 'production'
 
 const store = new Vuex.Store({
     modules: {
-        
+        authentication
     },
 
     // Add mock data if we're in testing (this will go away eventually)

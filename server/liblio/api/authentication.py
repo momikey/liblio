@@ -1,9 +1,8 @@
 ### Authentication, including login, account creation, etc.
 
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, jsonify, make_response
 from webargs import fields, validate
 from webargs.flaskparser import use_args
-from werkzeug.security import check_password_hash, generate_password_hash
 
 from liblio import db
 from liblio.error import APIError
@@ -19,6 +18,7 @@ blueprint = Blueprint('auth', __name__, url_prefix=BLUEPRINT_PATH)
 request_schemas = {
     'create_account': {
         'username': fields.Str(required=True),
+        'email': fields.Email(required=True),
         'password': fields.Str(validate=validate.Length(min=6))
     }
 }
@@ -30,10 +30,29 @@ request_schemas = {
 def create_account(args):
     "Create a new account on this server."
     if request.method == 'POST':
+
+        # TODO: Check for a user who is already logged in
+        
         username = args['username']
+        email = args['email']
         password = args['password']
 
-        return jsonify({'username': username, 'hash': generate_password_hash(password)}), 201
+        user = Login.query.filter_by(username=username).first()
+        if user is not None:
+            raise APIError(message="Username already exists on this server")
+
+        em = Login.query.filter_by(email=email).first()
+        if em is not None:
+            raise APIError(message="A user with this email address already exists on this server")
+
+        login = Login(username=username, email=email)
+        login.set_password(password)
+
+        # Add to the DB
+        db.session.add(login)
+        db.session.commit()
+
+        return make_response(jsonify({'username': username}), 201)
 
 @blueprint.route('/create-account', methods=('GET',))
 def create_account_get():

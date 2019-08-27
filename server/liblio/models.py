@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import check_password_hash, generate_password_hash
 
 # Create the DB object, so we can build models from it.
 # (Note that we set it up in the main app.)
@@ -25,7 +26,20 @@ class Login(db.Model):
 
     # Last login time
     # We keep this for stats purposes, nothing more.
-    last_login = db.Column(db.DateTime, nullable=False)
+    last_login = db.Column(db.DateTime, nullable=True)
+
+    # Last "action" time
+    # Basically, this is the last time this user accessed a protected API.
+    # We keep it for activity stats.
+    last_action = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):
         return "<Login {self.username} / {self.email}>".format(self=self)
+
+    def set_password(self, pw):
+        """Hash a user's password to securely store in the database."""
+        self.password = generate_password_hash(pw)
+
+    def check_password(self, pw):
+        """Check that a given password hashes to the known value, and is thus correct."""
+        return check_password_hash(self.password, pw)
