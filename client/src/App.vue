@@ -1,19 +1,19 @@
 <template>
-  <div id="app">
-    <navigation-bar />
+    <div id="app">
+        <navigation-bar />
 
-    <router-view />
-  </div>
+        <router-view />
+    </div>
 </template>
 
 <script>
 import NavigationBar from "@/components/NavigationBar.vue";
 
 export default {
-  components: {
-    NavigationBar
-  }
-}
+    components: {
+        NavigationBar
+        }
+    }
 </script>
 
 
@@ -29,30 +29,40 @@ $mdi-font-path: "~@mdi/font/fonts";
 @import "~buefy/src/scss/buefy";
 
 .has-text-primary-inverted {
-  color: findColorInvert($primary);
+    color: findColorInvert($primary);
 }
 
+/* Side panel background color */
+$side-panel: #ffeedd;
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
 }
 
 #nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
+    padding: 30px;
+
+    a {
+        font-weight: bold;
+        color: #2c3e50;
+        &.router-link-exact-active {
+            color: #42b983;
+        }
     }
-  }
 }
 
 .columns {
-  padding-left: 24px;
-  padding-right: 24px;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.side-panel {
+    background-color: #ffeedd;
+    height: 100%;
+    padding-top: 32px;
 }
 </style>

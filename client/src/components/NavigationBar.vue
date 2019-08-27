@@ -6,10 +6,6 @@
             </b-navbar-item>
 
             <b-navbar-item>
-                <router-link to="/login">Login</router-link>
-            </b-navbar-item>
-
-            <b-navbar-item>
                 <router-link to="/directory">Users</router-link>
             </b-navbar-item>
 
@@ -23,10 +19,6 @@
         </template>
 
         <template slot="end">
-            <b-navbar-item class="testing">
-                {{ testingText }}
-            </b-navbar-item>
-
             <b-navbar-item tag="div">
                 <b-dropdown
                     position="is-bottom-left"
@@ -54,6 +46,18 @@
                     </b-dropdown-item>
                 </b-dropdown>
             </b-navbar-item>
+
+            <b-navbar-item>
+                <b-tooltip :label="labels.logout" animated :delay="500"
+                    v-if="user"
+                >
+                    <a role="button"
+                        @click="onLogout"
+                    >
+                        <b-icon icon="logout" />
+                    </a>
+                </b-tooltip>
+            </b-navbar-item>
         </template>
     </b-navbar>
 </template>
@@ -72,6 +76,7 @@ export default {
 
             labels: {
                 notifications: "Notifications",
+                logout: "Log out"
             }
         }
     },
@@ -93,23 +98,19 @@ export default {
             }
         },
 
+        user () {
+            return this.$store.getters.user || true;
+        },
+
         isDebugMode () {
             return this.$store.getters.debugMode;
         }
     },
 
     methods: {
-        async retrieveSampleText () {
-            try {
-                return axios.get("/hello")
-            } catch (e) {
-                console.log("Unable to access server: ", e);
-            }
+        onLogout () {
+            console.log("Logging out")
         }
-    },
-
-    async mounted () {
-        this.testingText = (await this.retrieveSampleText()).data;
     },
 
     components: {

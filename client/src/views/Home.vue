@@ -4,29 +4,35 @@
         </div>
 
         <div class="column is-one-third">
-            <creator-panel />
+            <creator-panel v-if="user"
+            />
+
+            <login-panel v-else
+            />
         </div>
     </div>
 </template>
 
 <script>
-    import CreatorPanel from '@/components/CreatorPanel.vue'
+    import CreatorPanel from '@/components/CreatorPanel.vue';
+    import LoginPanel from '@/components/LoginPanel.vue';
 
     export default {
         name: 'home',
 
-        components: {
-            CreatorPanel,
-        },
-
         data () {
             return {
-                testUser: null,
+                user: null,
             }
         },
 
         mounted () {
 
+        },
+
+        components: {
+            CreatorPanel,
+            LoginPanel
         }
     }
 </script>

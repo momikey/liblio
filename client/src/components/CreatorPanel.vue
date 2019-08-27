@@ -1,10 +1,10 @@
 <template>
-    <section id="creator-panel" class="section">
+    <section class="side-panel section">
         <div class="container is-fluid">
             <div class="level">
                 <!-- User avatar -->
                 <div class="level-item">
-                    <figure class="image is-128x128" id="avatar-figure">
+                    <figure class="image is-128x128 creator-avatar-figure">
                         <img class="is-rounded" src="../assets/logo.png" />
                     </figure>
                 </div>
@@ -51,14 +51,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-#creator-panel {
-    background-color: #ffeedd;
-    height: 100%;
-    padding-top: 32px;
-}
-
-#avatar-figure > img {
-    background-color: gray;
-}
+<style lang="scss">
+    .creator-avatar-figure > img {
+        background-color: gray;
+    }
 </style>

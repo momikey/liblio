@@ -1,5 +1,5 @@
 <template>
-    <section class="login-panel card">
+    <section class="login-panel side-panel card">
         <div class="card-content">
             <p class="title">{{ labels.header }}</p>
 
@@ -32,6 +32,13 @@
                     {{ labels.clearButton }}
                 </b-button>
             </b-field>
+
+            <b-field class="level">
+                <p class="new-account-link">
+                    {{ labels.noAccount }} <router-link to="/new-account">
+                    {{labels.createAccount }}</router-link>
+                </p>
+            </b-field>
         </div>
     </section>
 </template>
@@ -52,7 +59,10 @@ export default {
                 password: "Password",
                 remember: "Remember me",
                 loginButton: "Log in",
-                clearButton: "Clear"
+                clearButton: "Clear",
+
+                noAccount: "Don't have an account?",
+                createAccount: "Create one now."
             }
         }
     },
@@ -73,7 +83,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .login-panel-button {
         margin-left: 12px;
         margin-right: 12px;
@@ -83,5 +93,10 @@ export default {
         text-align: left;
         padding-left: 12px;
         margin-top: 24px;
+    }
+
+    .new-account-link {
+        text-align: center;
+        width: 100%;
     }
 </style>
