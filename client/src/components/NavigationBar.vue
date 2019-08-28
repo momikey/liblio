@@ -109,7 +109,7 @@ export default {
 
     methods: {
         onLogout () {
-            console.log("Logging out")
+            this.$store.dispatch('logout')
         }
     },
 

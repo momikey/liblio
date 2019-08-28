@@ -14,7 +14,7 @@
             </b-field>
 
             <b-field class="remember">
-                <b-checkbox v-model="login.remember">{{ labels.remember }}</b-checkbox>
+                <b-checkbox v-model="remember">{{ labels.remember }}</b-checkbox>
             </b-field>
 
             <b-field class="level">
@@ -50,8 +50,9 @@ export default {
             login: {
                 username: '',
                 password: '',
-                remember: false,
             },
+
+            remember: false,
 
             labels: {
                 header: "Log in to Liblio",
@@ -69,9 +70,7 @@ export default {
 
     methods: {
         onLogin () {
-            for (const k of Object.keys(this.login)) {
-                console.log(`${k} = ${this.login[k]}`);
-            }
+            this.$store.dispatch('login', this.login);
         },
 
         onClear () {

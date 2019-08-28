@@ -14,6 +14,8 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
+
     import CreatorPanel from '@/components/CreatorPanel.vue';
     import LoginPanel from '@/components/LoginPanel.vue';
 
@@ -22,8 +24,13 @@
 
         data () {
             return {
-                user: null,
             }
+        },
+
+        computed: {
+            ...mapGetters([
+                'user'
+            ])
         },
 
         mounted () {
