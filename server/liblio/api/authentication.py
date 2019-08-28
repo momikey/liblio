@@ -3,7 +3,7 @@
 from datetime import datetime
 
 from flask import Blueprint, request, jsonify, make_response
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from webargs import fields, validate
 from webargs.flaskparser import use_args
 
@@ -89,4 +89,9 @@ def login(args):
     token = create_access_token(username)
     return make_response(jsonify(access_token=token), 200)
 
-### TODO: Logout, including token blacklist
+@blueprint.route('/logout', methods=('POST',))
+@jwt_required
+def logout():
+    ### TODO: Token revocation, blacklist, or whatever
+    username = get_jwt_identity()
+    return make_response(jsonify(logout=username), 200)
