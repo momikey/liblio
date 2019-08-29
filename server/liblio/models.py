@@ -8,7 +8,7 @@ db = SQLAlchemy()
 ### Models ###
 
 class Login(db.Model):
-    """A login is just the basic authentication for a Liblio user"""
+    """A login is just the basic authentication for a Liblio user."""
 
     __tablename__ = "logins"
 
@@ -33,6 +33,12 @@ class Login(db.Model):
     # We keep it for activity stats.
     last_action = db.Column(db.DateTime, nullable=True)
 
+    # The relationship to this account's "user" record
+    # This is intentionally left as a one-way relation, because not all users
+    # will have accounts, though all accounts will have users. Also, it is
+    # intended to be a one-to-one relation, so we have `useList=False`.
+    user = db.relationship('User', uselist=False)
+
     def __repr__(self):
         return "<Login {self.username} / {self.email}>".format(self=self)
 
@@ -43,3 +49,34 @@ class Login(db.Model):
     def check_password(self, pw):
         """Check that a given password hashes to the known value, and is thus correct."""
         return check_password_hash(self.password, pw)
+
+class User(db.Model):
+    """A user is any Liblio user, whether from this server or another."""
+
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    logins_id = db.Column(db.Integer, db.ForeignKey("logins.id"), nullable=True)
+
+    # The username
+    # Note: this is a duplicate field for local users, but not for those from
+    # other servers, so we can't necessarily connect it to a login.
+    username = db.Column(db.String(64), nullable=False)
+
+    # The originating server
+    origin = db.Column(db.String, nullable=False)
+
+    # The user's "display" name; i.e., how the user wishes to be seen
+    # (This can be left blank, in which case the username will be used instead.)
+    display_name = db.Column(db.String, nullable=True)
+
+    # The user's bio (or description, or whatever you wish to call it)
+    # This is a more freeform text field, and it can be any length, though clients
+    # and some servers may restrict it.
+    bio = db.Column(db.Text, nullable=True)
+
+    # TODO: Roles and tags (these have to be relations, so they can wait until
+    # we actually have the models done)
+
+    def __repr__(self):
+        return '<User "{self.display_name}" ({self.username}@{self.origin})>'.format(self=self)

@@ -35,7 +35,8 @@ def create_app():
     # This should all be changed by a file in `server/instance/`. (TODO: document that)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        JWT_SECRET_KEY='secret'
+        JWT_SECRET_KEY='secret',
+        SERVER_ORIGIN = 'localhost:5000'
     )
 
     # Other config stuff goes here
