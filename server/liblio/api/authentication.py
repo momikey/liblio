@@ -1,15 +1,15 @@
 ### Authentication, including login, account creation, etc.
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, make_response, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from webargs import fields, validate
 from webargs.flaskparser import use_args
 
 from liblio import db, jwt
 from liblio.error import APIError
-from liblio.models import Login
+from liblio.models import Login, User
 from . import API_PATH
 
 BLUEPRINT_PATH="{api}/auth".format(api=API_PATH)
@@ -56,11 +56,18 @@ def create_account(args):
         login = Login(username=username, email=email)
         login.set_password(password)
 
+        # Create a blank profile for this user (we can add to it later)
+        u = User(username=username, origin=current_app.config['SERVER_ORIGIN'])
+        login.user = u
+
         # Add to the DB
         db.session.add(login)
         db.session.commit()
 
-        return make_response(jsonify({'username': username}), 201)
+        return make_response(jsonify({
+            'username': username,
+            'temp_token': create_access_token(username, expires_delta=timedelta(seconds=60))
+            }), 201)
 
 @blueprint.route('/create-account', methods=('GET',))
 def create_account_get():

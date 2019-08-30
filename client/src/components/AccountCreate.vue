@@ -78,7 +78,6 @@ export default {
             // The user has agreed to the server's terms of use, and can
             // now continue with the account creation process.
             // TODO: Do we need to worry about GDPR, etc.?
-            console.log("Agreed");
 
             ++this.currentStep;
         },
@@ -105,9 +104,11 @@ export default {
         onAccountReviewed () {
             // The user has reviewed the account and profile details, and is now
             // submitting them to the server.
-            console.log(this.account, this.profile);
-
-            // TODO: Submit account/profile data to the server (and handle it there)
+            
+            this.$store.dispatch('createAccount', {
+                account: this.account,
+                profile: this.profile}
+            )
             ++this.currentStep;
         },
 

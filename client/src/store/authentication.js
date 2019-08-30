@@ -69,6 +69,36 @@ export default module = {
 
                     console.log(err.response.data);
                 })
-        }
+        },
+
+        createAccount({ state, commit }, { account, profile }) {
+            axios.post('/api/v1/auth/create-account', {...account})
+                .then(r => {
+                    // After creating the account, we create the profile
+                    axios.post('/api/v1/settings/edit-profile', {...profile}, {
+                        headers: {
+                            'Authorization': `Bearer ${r.data.temp_token}`
+                        }
+                    })
+                        .then(r => {
+
+                            return r;
+                        })
+                        .catch(err => {
+                            Snackbar.open({
+                                message: `Could not create profile: ${err.response.data.message}`,
+                                type: 'is-danger'
+                            })
+                        })
+
+                    return r;
+                })
+                .catch(err => {
+                    Snackbar.open({
+                        message: `Could not create account: ${err.response.data.message}`,
+                        type: 'is-danger'
+                    })
+                })
+        },
     }
 }

@@ -62,7 +62,7 @@ export default {
         return {
             profile: {
                 name: '',
-                role: '',
+                role: 0,
                 bio: '',
                 tags: []
             },

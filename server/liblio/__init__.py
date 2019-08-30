@@ -66,8 +66,9 @@ def create_app():
     jwt.init_app(app)
 
     # Blueprints for API
-    from .api import authentication
+    from .api import authentication, user_settings
     app.register_blueprint(authentication.blueprint)
+    app.register_blueprint(user_settings.blueprint)
 
     # Register our custom error handler
     @app.errorhandler(APIError)
