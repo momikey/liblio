@@ -33,11 +33,9 @@ class Login(db.Model):
     # We keep it for activity stats.
     last_action = db.Column(db.DateTime, nullable=True)
 
-    # The relationship to this account's "user" record
-    # This is intentionally left as a one-way relation, because not all users
-    # will have accounts, though all accounts will have users. Also, it is
-    # intended to be a one-to-one relation, so we have `useList=False`.
-    user = db.relationship('User', uselist=False)
+    # Relation to the user profile for this account
+    user = db.relationship('User', back_populates='login')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
         return "<Login {self.username} / {self.email}>".format(self=self)
@@ -56,7 +54,12 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    logins_id = db.Column(db.Integer, db.ForeignKey("logins.id"), nullable=True)
+
+    # The relation to this user's login credentials
+    # This is only valid for users on this server. It is normally only
+    # accessed from the login side, but that is much more difficult to model.
+    # SQL note: This is a one-to-one relation.
+    login = db.relationship('Login', uselist=False, back_populates='user')
 
     # The username
     # Note: this is a duplicate field for local users, but not for those from
