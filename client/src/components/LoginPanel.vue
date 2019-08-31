@@ -78,7 +78,7 @@ export default {
             this.login.password = '';
             this.login.remember = false;
         }
-    }
+    },
 }
 </script>
 

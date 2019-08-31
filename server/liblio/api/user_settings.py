@@ -1,5 +1,7 @@
 ### User settings, such as profile and display options
 
+from datetime import datetime
+
 from flask import Blueprint, jsonify, make_response, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from webargs import fields, validate
@@ -25,8 +27,25 @@ request_schemas = {
     }
 }
 
-
 ### Routes
+
+@blueprint.route('/my-profile', methods=('GET',))
+@jwt_required
+def get_my_profile():
+    """Get the profile for the logged-in user. (This may have sensitive/private info.)"""
+
+    username = get_jwt_identity()
+    origin = current_app.config['SERVER_ORIGIN']
+
+    profile = User.query.filter_by(username=username, origin=origin).first()
+    if profile is None:
+        # This shouldn't happen.
+        raise APIError(400, "User {username} does not exist on this server".format(username=username))
+
+    # Update last activity time
+    profile.login.last_action = datetime.now()
+
+    return make_response(jsonify(profile=profile.to_dict()), 200)
 
 @blueprint.route('/edit-profile', methods=('POST',))
 @jwt_required
@@ -53,6 +72,9 @@ def edit_profile(args):
         profile.bio = new_bio
     
     # TODO: do the same thing for roles and tags, once they're implemented
+
+    # This is an API action, so update the activity timestamp
+    profile.login.last_action = datetime.now()
 
     db.session.add(profile)
     db.session.commit()

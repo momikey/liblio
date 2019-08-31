@@ -1,3 +1,4 @@
+from flask import json
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -83,3 +84,11 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User "{self.display_name}" ({self.username}@{self.origin})>'.format(self=self)
+
+    def to_dict(self):
+        return dict(
+            username=self.username,
+            origin=self.origin,
+            display_name=self.display_name,
+            bio=self.bio
+        )

@@ -14,8 +14,8 @@
                 <!-- User name -->
                 <div class="level-item has-text-centered">
                     <div>
-                    <h1 class="is-size-4">Your name here</h1>
-                    <h2 class="is-size-6">(@yourname@example.com)</h2>
+                    <h1 class="is-size-4">{{ username }}</h1>
+                    <h2 class="is-size-6">({{ formatAddress() }})</h2>
                     </div>
                 </div>
             </div>
@@ -29,11 +29,18 @@
 </template>
 
 <script>
+import { actorAddress } from "@/modules/uri";
+
 import TagList from "@/components/TagList.vue";
+import { mapGetters } from 'vuex';
     
 export default {
     data () {
         return {
+            labels : {
+                noName: '(no name given)'
+            },
+
             tags: [
                 { key: 'test', value: "Tester" },
                 { key: 'author', value: "Author" }
@@ -41,9 +48,27 @@ export default {
         }
     },
 
-    props: [
-        'user'
-    ],
+    computed: {
+        ...mapGetters({
+            'user': 'myProfile'
+        }),
+
+        username () {
+            return this.user.name || this.labels.noName;
+        }
+    },
+
+    methods: {
+        formatAddress () {
+            return actorAddress(this.$store.getters.user, this.user.origin);
+        }
+    },
+
+    mounted () {
+        if (this.$store.getters.user) {
+            this.$store.dispatch('getProfile');
+        }
+    },
 
     components: {
         TagList
