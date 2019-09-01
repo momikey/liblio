@@ -1,7 +1,47 @@
 /*
- * Later on, this will be a much richer connecting module,
- * probably with Vuex or something. For now, it's all testing.
+ * Users store module.
  */
+
+import axios from "axios";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
+
+export default module = {
+    state: {
+        users: []
+    },
+
+    getters: {
+        allUsers: state => state.users,
+        visibleUsers: state => state.users.filter(u => !u.private)
+    },
+
+    mutations: {
+        saveUsers (state, u) {
+            state.users.splice(0, state.users.length, ...u);
+        }
+    },
+
+    actions: {
+        getUserDirectory ({ commit, state }) {
+            axios.get('/api/v1/user/public')
+                .then(r => {
+                    commit('saveUsers', r.data);
+
+                    return r;
+                })
+                .catch(err => {
+                    commit('saveUsers', []);
+
+                    console.log(err);
+
+                    Snackbar.open({
+                        message: err.response.data.message,
+                        type: 'is-warning'
+                    })
+                })
+        }
+    }
+}
 
 export function getAllUsers() {
     // Later: API call to the server, fetching all known users;

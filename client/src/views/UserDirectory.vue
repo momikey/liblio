@@ -13,9 +13,9 @@
 
 <script>
 
-import UserDirectoryEntry from "@/components/UserDirectoryEntry.vue";
+import { mapGetters } from "vuex";
 
-import { getAllUsers } from "@/modules/users";
+import UserDirectoryEntry from "@/components/UserDirectoryEntry.vue";
 
 export default {
     data () {
@@ -24,21 +24,22 @@ export default {
     },
 
     computed: {
-        users () {
-            return getAllUsers(null);
-        },
-
-        visibleUsers () {
-            return this.users.filter(u => !u.private);
-        }
+        ...mapGetters([
+            'allUsers',
+            'visibleUsers'
+        ]),
     },
 
     methods: {
-        getAllUsers
     },
 
     components: {
         UserDirectoryEntry
+    },
+
+    mounted () {
+        this.$store.dispatch('getUserDirectory');
+        console.log(this.allUsers);
     }
 }
 </script>
