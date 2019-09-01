@@ -91,6 +91,7 @@ class User(db.Model):
 
     def to_dict(self):
         return dict(
+            id=self.id,
             username=self.username,
             origin=self.origin,
             display_name=self.display_name,
