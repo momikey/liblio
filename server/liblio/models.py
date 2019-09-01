@@ -79,6 +79,10 @@ class User(db.Model):
     # and some servers may restrict it.
     bio = db.Column(db.Text, nullable=True)
 
+    # Whether this profile is "private" (i.e., doesn't show up in listings)
+    # Note that a private profile may still be accessibly to followers, etc.
+    private = db.Column(db.Boolean, nullable=False, default=False, server_default="false")
+
     # TODO: Roles and tags (these have to be relations, so they can wait until
     # we actually have the models done)
 
@@ -90,5 +94,6 @@ class User(db.Model):
             username=self.username,
             origin=self.origin,
             display_name=self.display_name,
-            bio=self.bio
+            bio=self.bio,
+            private=self.private
         )

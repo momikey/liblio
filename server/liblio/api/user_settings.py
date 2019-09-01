@@ -23,7 +23,8 @@ request_schemas = {
         'name': fields.Str(),
         'bio': fields.Str(),
         'role': fields.Int(missing=0),
-        'tags': fields.List(fields.Int())
+        'tags': fields.List(fields.Int()),
+        'private': fields.Boolean(missing=False)
     }
 }
 
