@@ -2,6 +2,9 @@
 
 import os
 
+from datetime import datetime
+import datedelta
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -20,6 +23,8 @@ migrate = Migrate()
 executor = Executor()
 jwt = JWTManager()
 
+LIBLIO_VERSION = "0.0.1"
+
 def create_app():
     """
     Create the Liblio server object as a Flask application.
@@ -36,7 +41,8 @@ def create_app():
     app.config.from_mapping(
         SECRET_KEY='dev',
         JWT_SECRET_KEY='secret',
-        SERVER_ORIGIN = 'localhost:5000'
+        SERVER_ORIGIN = 'localhost:5000',
+        OPEN_REGISTRATIONS = False
     )
 
     # Other config stuff goes here
@@ -87,13 +93,57 @@ def create_app():
         return handle_api_error(APIError(error.code, "Validation failure", payload={"errors": messages}))
 
     # Routes (we'll factor these out later)
-    @app.route("/hello")
-    def home():
-        return "Hello, world!"
 
     # Testing route to show all routes
     @app.route("/routes")
     def routes():
         return jsonify(repr(app.url_map))
+
+    @app.route("/.well-known/nodeinfo")
+    def nodeinfo():
+        """Return the Nodeinfo for this server."""
+        from .models import Login
+
+        month = datetime.now() - datedelta.MONTH
+        half_year = datetime.now() - datedelta.datedelta(months=6)
+        
+        # The Nodeinfo object, as per the schema:
+        # https://github.com/jhass/nodeinfo/blob/master/schemas/2.1/schema.json
+        response = jsonify(
+            version = 2.1,
+            
+            software = {
+                'name': 'liblio',
+                'version': LIBLIO_VERSION
+                # TODO: Add repo
+            },
+
+            protocols = ['activitypub'],
+
+            services = {
+                'inbound': [],
+                'outbound': []  # Add RSS/Atom or something later?
+            },
+
+            openRegistrations = app.config['OPEN_REGISTRATIONS'],
+
+            usage = {
+                'users': {
+                    'total': Login.query.count(),
+                    'activeHalfYear': Login.query.filter(Login.last_action >= half_year).count(),
+                    'activeMonth': Login.query.filter(Login.last_action >= month).count()
+                }
+            },
+
+            # TODO: Add local posts
+            
+            metadata = {
+                # Add metadata here
+            }
+        )
+
+        response.headers['Content-Type'] = "application/json; profile=http://nodeinfo.diaspora.software/ns/schema/2.1#"
+
+        return response, 200
     
     return app
