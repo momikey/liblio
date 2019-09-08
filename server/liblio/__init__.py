@@ -42,6 +42,7 @@ def create_app():
         SECRET_KEY='dev',
         JWT_SECRET_KEY='secret',
         SERVER_ORIGIN = 'localhost:5000',
+        HTTPS_ENABLED = False,
         OPEN_REGISTRATIONS = False
     )
 

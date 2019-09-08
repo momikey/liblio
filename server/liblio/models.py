@@ -1,4 +1,4 @@
-from flask import json
+from flask import json, current_app
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -7,6 +7,35 @@ from liblio.helpers import flake_id, printable_id
 # Create the DB object, so we can build models from it.
 # (Note that we set it up in the main app.)
 db = SQLAlchemy()
+
+
+### Helpers ###
+
+def render_content(context):
+    """Create the rendered form of this post's content."""
+
+    content_type = context.get_current_parameters()['content_type']
+    source = context.get_current_parameters()['source']
+
+    if content_type == 'text/html':
+        return source
+    else:
+        raise ValueError("Can't convert from source type {type}".format(type=content_type))
+
+def flake_to_string(flake):
+    """Return the printable form of this post's Flake ID."""
+    return printable_id(flake)
+
+def create_uri(context):
+    """Create a URI for a local post."""
+
+    flake = context.get_current_parameters()['flake']
+    origin = current_app.config['SERVER_ORIGIN']
+    scheme = 'https' if current_app.config['HTTPS_ENABLED'] else 'http'
+
+    path = "post/{id}".format(id=flake)
+
+    return "{scheme}://{origin}/{path}".format(scheme=scheme, origin=origin, path=path)
 
 ### Models ###
 
@@ -132,7 +161,7 @@ class Post(db.Model):
     # The "cooked" form of the post
     # In the case of posts constructed in, e.g., Markdown, this will be a rendered form
     # of the `source` property.
-    content = db.Column(db.Text, nullable=False)
+    content = db.Column(db.Text, nullable=False, default=render_content)
 
     # The post's Flake ID
     # This is different from the database ID, and we'll use it in URIs, but only
@@ -142,28 +171,10 @@ class Post(db.Model):
     # This post's URI
     # For local posts, we will generate this. For foreign posts, it will come as
     # the "id" property of the ActivityPub object.
-    uri = db.Column(db.String, nullable=False)
+    uri = db.Column(db.String, nullable=False, default=create_uri)
 
     # The post's parent and/or children
     # This uses a self-referential foreign key. If that's NULL, then this is
     # a top-level post. Otherwise, it's a reply to another post.
     parent_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=True)
-    parent = db.relationship('Post', backref='children')
-
-    def render_content(self):
-        """Create the rendered form of this post's content."""
-        if self.content_type is 'text/html':
-            self.content = self.source
-        else:
-            raise ValueError("Can't convert from source type {type}".format(type=self.content_type))
-
-    def flake_to_string(self):
-        """Return the printable form of this post's Flake ID."""
-        return printable_id(self.flake)
-
-    def create_uri(self, scheme="https"):
-        """Create a URI for a local post."""
-
-        path = "post/{id}".format(id=self.flake)
-
-        return "{scheme}://{origin}/{path}".format(scheme=scheme, origin=self.user.origin, path=path)
+    children = db.relationship('Post', backref=db.backref('parent', remote_side=[id]))
