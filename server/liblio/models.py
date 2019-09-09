@@ -22,10 +22,6 @@ def render_content(context):
     else:
         raise ValueError("Can't convert from source type {type}".format(type=content_type))
 
-def flake_to_string(flake):
-    """Return the printable form of this post's Flake ID."""
-    return printable_id(flake)
-
 def create_uri(context):
     """Create a URI for a local post."""
 
@@ -33,7 +29,7 @@ def create_uri(context):
     origin = current_app.config['SERVER_ORIGIN']
     scheme = 'https' if current_app.config['HTTPS_ENABLED'] else 'http'
 
-    path = "post/{id}".format(id=flake)
+    path = "post/{id}".format(id=printable_id(flake))
 
     return "{scheme}://{origin}/{path}".format(scheme=scheme, origin=origin, path=path)
 
@@ -178,3 +174,33 @@ class Post(db.Model):
     # a top-level post. Otherwise, it's a reply to another post.
     parent_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=True)
     children = db.relationship('Post', backref=db.backref('parent', remote_side=[id]))
+
+    def __repr__(self):
+        return '<Post "{subject}" by {user}@{origin}>'.format(
+            subject=self.short_subject(),
+            user=self.user.username,
+            origin=self.user.origin
+        )
+
+    def short_subject(self, length=16):
+        """Shorten this post's subject to fit in a given length, if necessary."""
+
+        if len(self.subject) > length:
+            return self.subject[:length] + '...'
+        elif self.subject is None or len(self.subject) == 0:
+            return '(no subject)'
+        else:
+            return self.subject
+
+    def to_dict(self):
+        return dict(
+            id=self.id,
+            user_id=self.user_id,
+            subject=self.subject,
+            source=self.source,
+            content_type=self.content_type,
+            content=self.content,
+            flake=self.flake,
+            uri=self.uri,
+            parent_id=self.parent_id
+        )
