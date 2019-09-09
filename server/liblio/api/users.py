@@ -24,20 +24,61 @@ def get_by_id(user_id):
     user = User.query.get(user_id)
 
     if user is not None:
-        return make_response(jsonify(user.to_dict()), 200)
+        return jsonify(user.to_dict()), 200
     else:
         raise APIError(404, "User with ID {id} does not exist on this server".format(id=user_id))
+
+@blueprint.route('/by-name/<username>')
+def get_by_name(username):
+    """Find a user by name. This can be done in one of two ways. For local users,
+    simply passing the username will find the user with that name. If the query
+    parameter contains an @ character, the search will instead be across all known
+    servers.
+
+    Examples:
+    * "/by-name/foo" searches for a user named "foo" on this server.
+    * "/by-name/foo@example.com" searches for a user with the name "foo" from
+        the origin server "example.com".
+    """
+
+    if '@' in username:
+        # Username/origin pair, so search both
+        name, origin = username.split('@')
+        user = User.query.filter_by(username=name, origin=origin).first()
+
+        if user is not None:
+            return jsonify(user.to_dict()), 200
+        else:
+            raise APIError(404, "No user {username} found.".format(username=username))
+    else:
+        # Local username search
+        user = User.query.filter_by(username=username).first()
+
+        if user is not None:
+            return jsonify(user.to_dict()), 200
+        else:
+            raise APIError(404, "User {name} does not exist on this server".format(name=username))
 
 @blueprint.route('/all')
 def get_all_users():
     """Get a list of all users this server knows."""
     users = User.query.all()
 
-    return make_response(jsonify([u.to_dict() for u in users]), 200)
+    return jsonify([u.to_dict() for u in users]), 200
 
 @blueprint.route('/public')
 def get_public_users():
     """Get a list of all users whose profiles are public."""
     users = User.query.filter_by(private=False).all()
 
-    return make_response(jsonify([u.to_dict() for u in users]), 200)
+    return jsonify([u.to_dict() for u in users]), 200
+
+@blueprint.route('/posts-by-id/<int:user_id>')
+def get_posts_by_id(user_id):
+    """Get all posts for the user with the given database ID."""
+    user = User.query.get(user_id)
+
+    if user is not None:
+        return jsonify([p.to_dict() for p in user.posts]), 200
+    else:
+        raise APIError(404, "User with ID {id} does not exist on this server".format(id=user_id))
