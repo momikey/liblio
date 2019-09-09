@@ -8,8 +8,16 @@ export default new Router({
   routes: [
     {
       path: '/',
+      redirect: '/web'
+    },
+
+    {
+      path: '/web',
       name: 'home',
-      component: Home
+      component: Home,
+      children: [
+
+      ]
     },
 
     {
@@ -18,31 +26,31 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('./views/About.vue')
+      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
 
     {
       path: '/login',
       name: 'login',
-      component: () => import('./views/Login.vue')
+      component: () => import(/* webpackChunkName: "login" */ './views/Login.vue')
     },
 
     {
       path: '/directory',
       name: 'directory',
-      component: () => import('./views/UserDirectory.vue')
+      component: () => import(/* webpackChunkName: "user-directory" */ './views/UserDirectory.vue')
     },
 
     {
       path: '/new-account',
       name: 'new-account',
-      component: () => import('./views/NewAccount.vue')
+      component: () => import(/* webpackChunkName: "new-account" */ './views/NewAccount.vue')
     },
 
     {
       path: '/sandbox',
       name: 'sandbox',
-      component: () => import('./views/Sandbox.vue')
+      component: () => import(/* webpackChunkName: "sandbox" */ './views/Sandbox.vue')
     }
   ]
 })

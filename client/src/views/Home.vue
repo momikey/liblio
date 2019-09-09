@@ -1,6 +1,7 @@
 <template>
     <div class="home columns">
         <div class="column is-two-thirds">
+            <router-view />
         </div>
 
         <div class="column is-one-third">
