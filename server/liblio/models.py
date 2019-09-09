@@ -1,13 +1,13 @@
 from flask import json, current_app
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 from liblio.helpers import flake_id, printable_id
 
 # Create the DB object, so we can build models from it.
 # (Note that we set it up in the main app.)
 db = SQLAlchemy()
-
 
 ### Helpers ###
 
@@ -169,6 +169,10 @@ class Post(db.Model):
     # the "id" property of the ActivityPub object.
     uri = db.Column(db.String, nullable=False, default=create_uri)
 
+    # This post's timestamp
+    # For local posts, this will be generated; foreign posts will provide it.
+    timestamp = db.Column(db.TIMESTAMP, nullable=False, server_default=db.func.now())
+
     # The post's parent and/or children
     # This uses a self-referential foreign key. If that's NULL, then this is
     # a top-level post. Otherwise, it's a reply to another post.
@@ -202,5 +206,6 @@ class Post(db.Model):
             content=self.content,
             flake=self.flake,
             uri=self.uri,
-            parent_id=self.parent_id
+            parent_id=self.parent_id,
+            timestamp=self.timestamp
         )
