@@ -16,6 +16,12 @@ export default new Router({
             name: 'home',
             component: Home,
             children: [
+                {
+                    path: 'user/:userid',
+                    name: 'user-profile',
+                    component: () => import(/* webpackChunkName: "home" */ './components/UserPostList.vue'),
+                    props: true
+                }
             ]
         },
         

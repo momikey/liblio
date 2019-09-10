@@ -1,18 +1,18 @@
 <template>
-    <section class="card post-card">
+    <section class="card post-card" v-if="post">
         <!-- Post title -->
         <header class="card-header has-background-primary">
             <p class="card-header-title has-text-primary-inverted">
-                {{ post.title }}
+                {{ post.subject }}
             </p>
 
             <p class="card-header-title is-size-7 has-text-right liblio-post-author has-text-primary-inverted">
-                {{ by(post.author) }}
+                {{ by(post.user) }}
             </p>
         </header>
 
         <!-- Post image, if available -->
-        <div v-if="post.iamge" class="card-image">
+        <div v-if="post.image" class="card-image">
             <figure class="image">
                 <!-- Put image here -->
             </figure>
@@ -59,14 +59,14 @@ export default {
 
     methods: {
         by (author) {
-            return `by ${author}`
+            return `by ${author.username}`;
         }
     },
 
     components: {
         PostingActionsFooter,
         CommentComposer
-    }
+    },
 }
 </script>
 

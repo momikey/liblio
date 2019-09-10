@@ -74,5 +74,11 @@ export default {
 </script>
 
 <style lang="scss">
+    .composer {
+        margin-bottom: 1rem;
+    }
 
+    .composer-actions {
+        padding-bottom: 2rem;
+    }
 </style>

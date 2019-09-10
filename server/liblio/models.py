@@ -199,7 +199,7 @@ class Post(db.Model):
     def to_dict(self):
         return dict(
             id=self.id,
-            user_id=self.user_id,
+            user=self.user.to_dict() if self.user is not None else None,
             subject=self.subject,
             source=self.source,
             content_type=self.content_type,

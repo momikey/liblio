@@ -7,17 +7,23 @@ import { SnackbarProgrammatic as Snackbar } from "buefy";
 
 export default module = {
     state: {
-        users: []
+        users: [],
+        currentUserPosts: [],
     },
 
     getters: {
         allUsers: state => state.users,
-        visibleUsers: state => state.users.filter(u => !u.private)
+        visibleUsers: state => state.users.filter(u => !u.private),
+        currentUserPosts: state => state.currentUserPosts,
     },
 
     mutations: {
         saveUsers (state, u) {
             state.users.splice(0, state.users.length, ...u);
+        },
+
+        saveUserPosts (state, posts) {
+            state.currentUserPosts.splice(0, state.currentUserPosts.length, ...posts);
         }
     },
 
@@ -39,43 +45,25 @@ export default module = {
                         type: 'is-warning'
                     })
                 })
+        },
+
+        getUserPosts ({ commit, state }, id) {
+            axios.get(`/api/v1/user/posts-by-id/${id}`)
+                .then(r => {
+                    commit('saveUserPosts', r.data);
+
+                    return r;
+                })
+                .catch(err => {
+                    commit('saveUserPosts', []);
+
+                    console.log(err)
+
+                    Snackbar.open({
+                        message: "Couldn't fetch posts for this user: ${err.response.data.message}",
+                        type: 'is-warning'
+                    })
+                })
         }
     }
-}
-
-export function getAllUsers() {
-    // Later: API call to the server, fetching all known users;
-    // will likely need an API token of some sort.
-    return [
-        {
-            id: 1,
-            name: "Test User",
-            address: "@test@example.com",
-            private: false,
-            tags: [
-                { key: 'tester', value: 'Tester' },
-                { key: 'author', value: 'Author' },
-                { key: 'admin', value: 'Administrator' }
-            ]
-        },
-        {
-            id: 42,
-            name: "Another User",
-            address: "@other@example.invalid",
-            private: false,
-            tags: [
-                { key: 'tester', value: 'Tester' },
-                { key: 'artist', value: 'Artist' }
-            ]
-        },
-        {
-            id: 83,
-            name: "Secret Agent",
-            address: "@secret@fbi.invalid",
-            private: true,
-            tags: [
-                { key: 'tester', value: 'Tester' }
-            ]
-        }
-    ]
 }

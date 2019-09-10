@@ -8,7 +8,7 @@
             :post="parent"
         />
 
-        <comment-card v-for="child in children" :key="JSON.stringify(child)"
+        <comment-card v-for="child in children" :key="child.id"
             :post="child"
         />
     </section>
