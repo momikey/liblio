@@ -4,6 +4,7 @@
 
 import axios from "axios";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
+import router from '../router';
 
 export default module = {
     state: {
@@ -40,6 +41,8 @@ export default module = {
                     commit('user', credentials.username);
                     commit('accessToken', r.data.access_token);
 
+                    router.push('/web');
+
                     return r;
                 })
                 .catch(err => {
@@ -74,6 +77,10 @@ export default module = {
                     return r;
                 })
                 .catch(err => {
+                    commit('user', '');
+                    commit('accessToken', '');
+                    commit('clearProfile');
+                    
                     Snackbar.open({
                         message: "Could not log out",
                         type: 'is-warning'

@@ -47,9 +47,8 @@
                 </b-dropdown>
             </b-navbar-item>
 
-            <b-navbar-item>
+            <b-navbar-item v-if="user">
                 <b-tooltip :label="labels.logout" animated :delay="500"
-                    v-if="user"
                 >
                     <a role="button"
                         @click="onLogout"
@@ -99,7 +98,7 @@ export default {
         },
 
         user () {
-            return this.$store.getters.user || true;
+            return this.$store.getters.user || false;
         },
 
         isDebugMode () {
