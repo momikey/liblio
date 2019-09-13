@@ -33,6 +33,13 @@ def create_uri(context):
 
     return "{scheme}://{origin}/{path}".format(scheme=scheme, origin=origin, path=path)
 
+### Association Tables ###
+
+likes = db.Table('likes',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('post_id', db.Integer, db.ForeignKey('posts.id'), primary_key=True)
+)
+
 ### Models ###
 
 class Login(db.Model):
@@ -113,6 +120,9 @@ class User(db.Model):
     # Note that a private profile may still be accessibly to followers, etc.
     private = db.Column(db.Boolean, nullable=False, default=False, server_default='false')
 
+    # This user's liked posts
+    likes = db.relationship('Post', secondary=likes, back_populates='liking')
+
     # TODO: Roles and tags (these have to be relations, so they can wait until
     # we actually have the models done)
 
@@ -178,6 +188,9 @@ class Post(db.Model):
     # a top-level post. Otherwise, it's a reply to another post.
     parent_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=True)
     children = db.relationship('Post', backref=db.backref('parent', remote_side=[id]))
+
+    # All users who like this post
+    liking = db.relationship('User', secondary=likes, back_populates='likes')
 
     def __repr__(self):
         return '<Post "{subject}" by {user}@{origin}>'.format(
