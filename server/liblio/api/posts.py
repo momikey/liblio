@@ -72,7 +72,51 @@ def create_post(args):
     # This does affect the "last active" time
     login.last_action = datetime.now()
 
-    db.session.add(post, login)
+    db.session.add(post, login)    
     db.session.commit()
 
-    return jsonify(post.to_dict()), 201
+    return jsonify(post.to_dict()), 201, { 'Location': post.uri }
+
+@blueprint.route('/like/<int:post_id>', methods=('POST', 'PUT'))
+@jwt_required
+def like_post(post_id):
+    username = get_jwt_identity()
+
+    login = Login.query.filter_by(username=username).first()
+
+    if login is None:
+        raise APIError(400, "User {username} does not exist on this server".format(username=username))
+
+    if post_id not in [p.id for p in login.user.likes]:
+        post = Post.query.get(post_id)
+        login.user.likes.append(post)
+
+        login.last_action = datetime.now()
+        db.session.add(post, login)
+        db.session.commit()
+
+    return jsonify({ 'likes': [p.id for p in login.user.likes] }), 200
+
+@blueprint.route('/like/<int:post_id>', methods=('DELETE',))
+@jwt_required
+def remove_like(post_id):
+    username = get_jwt_identity()
+
+    login = Login.query.filter_by(username=username).first()
+
+    if login is None:
+        raise APIError(400, "User {username} does not exist on this server".format(username=username))
+
+    likes_ids = [p.id for p in login.user.likes]
+    if post_id in likes_ids:
+        post = login.user.likes[likes_ids.index(post_id)]
+        del login.user.likes[likes_ids.index(post_id)]
+
+        login.last_action = datetime.now()
+        db.session.add(post, login)
+        db.session.commit()
+
+        return jsonify({ 'likes': [p.id for p in login.user.likes] }), 200
+    else:
+        # Trying to remove the like from a post that isn't liked
+        raise APIError(404, "User has not liked this post")

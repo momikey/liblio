@@ -202,10 +202,10 @@ class Post(db.Model):
     def short_subject(self, length=16):
         """Shorten this post's subject to fit in a given length, if necessary."""
 
-        if len(self.subject) > length:
-            return self.subject[:length] + '...'
-        elif self.subject is None or len(self.subject) == 0:
+        if self.subject is None or len(self.subject) == 0:
             return '(no subject)'
+        elif len(self.subject) > length:
+            return self.subject[:length] + '...'
         else:
             return self.subject
 
