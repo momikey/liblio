@@ -35,9 +35,18 @@ def create_uri(context):
 
 ### Association Tables ###
 
+# Likes connect users (`likes` property) to posts (`liking` property)
 likes = db.Table('likes',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
     db.Column('post_id', db.Integer, db.ForeignKey('posts.id'), primary_key=True)
+)
+
+# Follows connect users (`following` property) to other users (`followers` property)
+# This is a self-referential many-to-many relation, probably one of the most
+# convoluted kind there is.
+follows = db.Table('follows',
+    db.Column('follower_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('followed_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
 )
 
 ### Models ###
@@ -122,6 +131,14 @@ class User(db.Model):
 
     # This user's liked posts
     likes = db.relationship('Post', secondary=likes, back_populates='liking')
+
+    # This user' followers/followed users
+    followers = db.relationship('User',
+        secondary=follows,
+        primaryjoin='User.id == follows.c.followed_id',
+        secondaryjoin='User.id == follows.c.follower_id',
+        backref='following'
+    )
 
     # TODO: Roles and tags (these have to be relations, so they can wait until
     # we actually have the models done)
