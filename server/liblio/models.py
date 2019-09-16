@@ -2,6 +2,7 @@ from flask import json, current_app
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
+import re
 
 from liblio.helpers import flake_id, printable_id
 
@@ -47,6 +48,17 @@ likes = db.Table('likes',
 follows = db.Table('follows',
     db.Column('follower_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
     db.Column('followed_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
+)
+
+# User/post tags connect either users or posts to tags
+user_tags = db.Table('user_tags',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True)
+)
+
+post_tags = db.Table('post_tags',
+    db.Column('post_id', db.Integer, db.ForeignKey('posts.id'), primary_key=True),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True)
 )
 
 ### Models ###
@@ -140,6 +152,9 @@ class User(db.Model):
         backref='following'
     )
 
+    # This user's profile tags
+    tags = db.relationship('Tag', secondary=user_tags, back_populates='users')
+
     # TODO: Roles and tags (these have to be relations, so they can wait until
     # we actually have the models done)
 
@@ -209,6 +224,9 @@ class Post(db.Model):
     # All users who like this post
     liking = db.relationship('User', secondary=likes, back_populates='likes')
 
+    # Any tags given to this post
+    tags = db.relationship('Tag', secondary=post_tags, back_populates='posts')
+
     def __repr__(self):
         return '<Post "{subject}" by {user}@{origin}>'.format(
             subject=self.short_subject(),
@@ -239,3 +257,36 @@ class Post(db.Model):
             parent_id=self.parent_id,
             timestamp=self.timestamp
         )
+
+class Tag(db.Model):
+    """A tag for a post or user on a Liblio server."""
+
+    __tablename__ = 'tags'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Tags really have only two properties: a name and a description.
+    # If a tag is picked up in a post from a non-Liblio server, it will
+    # have no description initially, but an admin should be allowed to
+    # add one if necessary.
+    name = db.Column(db.String, nullable=False)
+
+    description = db.Column(db.String, nullable=True)
+
+    # Relation properties
+    users = db.relationship('User', secondary='user_tags', back_populates='tags')
+    posts = db.relationship('Post', secondary='post_tags', back_populates='tags')
+
+    def __repr__(self):
+        return "<Tag {self.name}>".format(self=self)
+
+    def to_dict(self):
+        return dict(
+            name=self.name,
+            description=self.description
+        )
+
+    @staticmethod
+    def normalize_name(name):
+        """Normalize the name of a tag, removing spaces and punctuation."""
+        return re.sub(r'\W', '', name)
