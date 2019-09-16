@@ -51,6 +51,7 @@ def get_by_flake(flake_id):
 @jwt_required
 @use_args(request_schemas['new_post'])
 def create_post(args):
+    """Create a new post."""
     username = get_jwt_identity()
 
     login = Login.query.filter_by(username=username).first()
@@ -80,6 +81,7 @@ def create_post(args):
 @blueprint.route('/like/<int:post_id>', methods=('POST', 'PUT'))
 @jwt_required
 def like_post(post_id):
+    """Like the post with a given ID."""
     username = get_jwt_identity()
 
     login = Login.query.filter_by(username=username).first()
@@ -100,6 +102,7 @@ def like_post(post_id):
 @blueprint.route('/like/<int:post_id>', methods=('DELETE',))
 @jwt_required
 def remove_like(post_id):
+    """Remove a like from a given post."""
     username = get_jwt_identity()
 
     login = Login.query.filter_by(username=username).first()
