@@ -39,7 +39,6 @@ export default {
 
     mounted () {
         this.$store.dispatch('getUserDirectory');
-        console.log(this.allUsers);
     }
 }
 </script>

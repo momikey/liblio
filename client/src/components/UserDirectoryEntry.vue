@@ -1,7 +1,11 @@
 <template>
     <section class="card">
         <div class="card-content has-text-left">
-            <h1 class="title is-4">{{ user.display_name || '(' + user.username + ')' }}</h1>
+            <h1 class="title is-4">
+                <router-link :to="userLink(user)">
+                    {{ user.display_name || '(' + user.username + ')' }}
+                </router-link>
+            </h1>
             <p class="subtitle is-6">{{ actorAddress(user.username, user.origin) }}</p>
             <tag-list
                 :tags="user.tags"
@@ -24,6 +28,10 @@ export default {
 
     methods: {
         actorAddress,
+
+        userLink (user) {
+            return `/web/user/${user.id}`;
+        }
     },
 
     components: {

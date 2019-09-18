@@ -37,7 +37,8 @@ const store = new Vuex.Store({
     },
 
     getters: {
-        debugMode: state => state.debug
+        debugMode: state => state.debug,
+        host: state => state.debug ? "localhost:5000" : window.location.host
     },
 
     mutations: {
