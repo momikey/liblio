@@ -73,11 +73,12 @@ def create_app():
     jwt.init_app(app)
 
     # Blueprints for API
-    from .api import authentication, posts, user_settings, users
+    from .api import authentication, posts, user_settings, users, tags
     app.register_blueprint(authentication.blueprint)
     app.register_blueprint(posts.blueprint)
     app.register_blueprint(user_settings.blueprint)
     app.register_blueprint(users.blueprint)
+    app.register_blueprint(tags.blueprint)
 
     # Register our custom error handler
     @app.errorhandler(APIError)
@@ -95,6 +96,11 @@ def create_app():
         return handle_api_error(APIError(error.code, "Validation failure", payload={"errors": messages}))
 
     # Routes (we'll factor these out later)
+
+    @app.route("/")
+    def index():
+        # TODO: Static load the client-side SPA
+        raise APIError(501, "Not yet implemented")
 
     # Testing route to show all routes
     @app.route("/routes")

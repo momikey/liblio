@@ -34,6 +34,16 @@ def create_uri(context):
 
     return "{scheme}://{origin}/{path}".format(scheme=scheme, origin=origin, path=path)
 
+def create_tag_uri(name):
+    """Create a local URI for a tag."""
+
+    origin = current_app.config['SERVER_ORIGIN']
+    scheme = 'https' if current_app.config['HTTPS_ENABLED'] else 'http'
+
+    path = "tag/{name}".format(name=name)
+
+    return "{scheme}://{origin}/{path}".format(scheme=scheme, origin=origin, path=path)
+
 ### Association Tables ###
 
 # Likes connect users (`likes` property) to posts (`liking` property)
@@ -286,7 +296,10 @@ class Tag(db.Model):
             description=self.description
         )
 
+    def uri(self):
+        return create_tag_uri(self.name)
+
     @staticmethod
     def normalize_name(name):
         """Normalize the name of a tag, removing spaces and punctuation."""
-        return re.sub(r'\W', '', name)
+        return re.sub(r'\W', '', name).casefold()
