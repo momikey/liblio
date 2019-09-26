@@ -123,3 +123,31 @@ def remove_like(post_id):
     else:
         # Trying to remove the like from a post that isn't liked
         raise APIError(404, "User has not liked this post")
+
+@blueprint.route('/tree/<int:post_id>')
+def get_post_tree(post_id):
+    """Get the post and all its descendants."""
+
+    # The given post is the root of a tree of arbitrary depth,
+    # so we use a recursive query to get the IDs of all the
+    # posts lower in the tree, then use that list to fetch only
+    # the needed posts. SQLAlchemy handles setting up the relations.
+
+    root = Post.query.get(post_id)
+
+    included = db.session.query(
+        Post.id).filter(Post.parent_id == root.id).cte(name="included", recursive=True)
+
+    included_alias = db.aliased(included, name="parent")
+    children_alias = db.aliased(Post, name="child")
+
+    included = included.union_all(
+        db.session.query(children_alias.id).filter(children_alias.parent_id == included_alias.c.id)
+    )
+
+    # The DB returns the results in tuples, so we extract them here
+    post_ids = sorted([root.id] + [t[0] for t in db.session.query(included.c.id).distinct().all()])
+
+    posts = Post.query.filter(Post.id.in_(post_ids)).all()
+
+    return jsonify([p.to_dict() for p in posts]), 200
