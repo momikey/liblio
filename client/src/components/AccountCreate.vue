@@ -107,8 +107,8 @@ export default {
             
             this.$store.dispatch('createAccount', {
                 account: this.account,
-                profile: this.profile}
-            )
+                profile: this.profile
+            })
             ++this.currentStep;
         },
 

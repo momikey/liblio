@@ -10,6 +10,10 @@
             </b-navbar-item>
 
             <b-navbar-item>
+                <router-link to="/explore">Explore</router-link>
+            </b-navbar-item>
+
+            <b-navbar-item>
                 <router-link to="/new-account">New Account</router-link>
             </b-navbar-item>
 
@@ -62,8 +66,6 @@
 </template>
 
 <script>
-import axios from 'axios'; 
-
 import NotificationsList from '@/components/NotificationsList.vue';
 
 export default {

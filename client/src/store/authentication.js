@@ -107,7 +107,6 @@ export default module = {
                         }
                     })
                         .then(r => {
-
                             return r;
                         })
                         .catch(err => {

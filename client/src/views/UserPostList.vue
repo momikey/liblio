@@ -1,8 +1,16 @@
 <template>
     <section class="user-post-list">
-        <creator-post-card v-for="post in currentUserPosts" :key="post.id"
-            :post="post"
-        />
+        <template v-if="currentUserPosts.length">
+            <div class="section" v-for="post in currentUserPosts" :key="post.id">
+                <creator-post-card
+                    :post="post"
+                />
+            </div>
+        </template>
+
+        <template v-else>
+            <p class="no-posts">{{ labels.noPosts }}</p>
+        </template>
     </section>
 </template>
 
@@ -15,7 +23,10 @@ import CreatorPostCard from '@/components/CreatorPostCard.vue';
 export default {
     data () {
         return {
-
+            // TODO: i18n
+            labels: {
+                noPosts: "No posts found for this user"
+            }
         }
     },
 
@@ -40,6 +51,9 @@ export default {
 }
 </script>
 
-<style lang="scss">
-
+<style>
+    .user-post-list > .section {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
 </style>

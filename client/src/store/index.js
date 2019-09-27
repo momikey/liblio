@@ -7,6 +7,7 @@ import VuexPersistence from 'vuex-persist';
  */
 import authentication from './authentication';
 import profile from './profile';
+import tags from './tags';
 import users from './users';
 
 import MockData from './mockdata';
@@ -23,6 +24,7 @@ const store = new Vuex.Store({
     modules: {
         authentication,
         profile,
+        tags,
         users
     },
 

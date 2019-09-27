@@ -19,9 +19,9 @@ export default new Router({
                 {
                     path: 'user/:userid',
                     name: 'user-profile',
-                    component: () => import(/* webpackChunkName: "home" */ './components/UserPostList.vue'),
+                    component: () => import(/* webpackChunkName: "home" */ './views/UserPostList.vue'),
                     props: true
-                }
+                },
             ]
         },
         
@@ -44,6 +44,12 @@ export default new Router({
             path: '/directory',
             name: 'directory',
             component: () => import(/* webpackChunkName: "user-directory" */ './views/UserDirectory.vue')
+        },
+        
+        {
+            path: '/explore',
+            name: 'explore',
+            component: () => import(/* webpackChunkName: "explore-tags" */ './views/ExploreTags.vue')
         },
         
         {

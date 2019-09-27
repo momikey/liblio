@@ -1,5 +1,5 @@
 <template>
-    <section class="card post-card" v-if="post">
+    <article class="card post-card" v-if="post">
         <!-- Post title -->
         <header class="card-header has-background-primary">
             <p class="card-header-title has-text-primary-inverted">
@@ -39,7 +39,7 @@
                 @post-cancel="isReplying = false"
             />
         </div>
-    </section>
+    </article>
 </template>
 
 <script>
