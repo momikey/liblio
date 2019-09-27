@@ -265,7 +265,8 @@ class Post(db.Model):
             flake=self.flake,
             uri=self.uri,
             parent_id=self.parent_id,
-            timestamp=self.timestamp
+            timestamp=self.timestamp,
+            tags=[t.to_dict() for t in self.tags]
         )
 
 class Tag(db.Model):

@@ -9,7 +9,7 @@ from webargs.flaskparser import use_args
 
 from liblio import db, jwt
 from liblio.error import APIError
-from liblio.models import User
+from liblio.models import User, Tag
 from . import API_PATH
 
 BLUEPRINT_PATH="{api}/settings".format(api=API_PATH)
@@ -23,7 +23,7 @@ request_schemas = {
         'name': fields.Str(),
         'bio': fields.Str(),
         'role': fields.Int(missing=0),
-        'tags': fields.List(fields.Int()),
+        'tags': fields.List(fields.Str()),
         'private': fields.Boolean(missing=False)
     }
 }
@@ -65,6 +65,7 @@ def edit_profile(args):
 
     new_name = args['name']
     new_bio = args['bio']
+    new_tags = args['tags']
 
     if new_name is not None:
         profile.display_name = new_name
@@ -72,6 +73,8 @@ def edit_profile(args):
     if new_bio is not None:
         profile.bio = new_bio
     
+    if new_tags is not None:
+        profile.tags = Tag.query.filter(Tag.name.in_(new_tags))
     # TODO: do the same thing for roles and tags, once they're implemented
 
     # This is an API action, so update the activity timestamp
