@@ -22,6 +22,13 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "home" */ './views/UserPostList.vue'),
                     props: true
                 },
+
+                {
+                    path: 'tag/:tagname',
+                    name: 'tag-display',
+                    component: () => import(/* webpackChunkName: "home" */ './views/TagDisplay.vue'),
+                    props: true
+                }
             ]
         },
         

@@ -13,7 +13,10 @@ export default module = {
     },
 
     getters: {
-        tags: state => state.tags
+        tags: state => state.tags,
+        tag: state => (tag) => {
+            return state.tags.find(t => t.name == tag);
+        }
     },
 
     mutations: {
