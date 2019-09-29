@@ -4,7 +4,7 @@
             <b-tag rounded class="level-item"
                 v-for="tag in tags" :key="tag.key"
             >
-                <router-link :to="uriForTag(tag.key)">{{ tag.value }}</router-link>
+                <router-link :to="`web/${uriForTag(tag.key)}`">{{ tag.value }}</router-link>
             </b-tag>
         </div>
     </div>
