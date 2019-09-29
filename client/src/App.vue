@@ -12,8 +12,14 @@ import NavigationBar from "@/components/NavigationBar.vue";
 export default {
     components: {
         NavigationBar
+    },
+
+    mounted () {
+        if (this.$store.getters.user && this.$storegetters.accessToken) {
+            this.$store.dispatch('initiateRefresh');
         }
     }
+}
 </script>
 
 

@@ -10,6 +10,7 @@ export default module = {
     state: {
         accessToken: "",
         user: "",
+        apiPoll: null
     },
 
     getters: {
@@ -25,6 +26,14 @@ export default module = {
 
         user (state, username) {
             state.user = username;
+        },
+
+        setApiPollId (state, id) {
+            state.apiPoll = id;
+        },
+
+        clearApiPollId (state) {
+            state.apiPoll = null;
         }
     },
 
@@ -35,13 +44,14 @@ export default module = {
          * @param { state, commit } Vuex store
          * @param credentials An object containing a username and password
          */
-        login ({ state, commit }, credentials) {
+        login ({ state, commit, dispatch }, credentials) {
             axios.post('/api/v1/auth/login', credentials)
                 .then(r => {
                     commit('user', credentials.username);
                     commit('accessToken', r.data.access_token);
 
-                    router.push('/web');
+                    // router.push('/');
+                    dispatch('initiateRefresh');
 
                     return r;
                 })
@@ -73,6 +83,9 @@ export default module = {
                     commit('user', '');
                     commit('accessToken', '');
                     commit('clearProfile');
+
+                    window.clearInterval(state.apiPoll);
+                    commit('clearApiPollId')
 
                     return r;
                 })
@@ -127,13 +140,40 @@ export default module = {
         },
 
         /**
+         * Start refreshing the API token
+         *
+         * @param { commit }
+         */
+        initiateRefresh({ commit }) {
+            commit('setApiPollId', window.setInterval(() => {
+                dispatch('refreshToken');
+            }, 5 * 60 * 1000));
+        },
+
+        /**
          * Refresh the user's aPI access token
          *
          * @param { commit }
          * @param token The new token
          */
-        refreshToken ({ commit }, token) {
-            commit('accessToken', token);
+        refreshToken ({ state, commit }) {
+            // commit('accessToken', token);
+            console.log(Date.now());
+            axios.get(`/refresh?time=${Date.now()}`, {
+                headers: {
+                    'Authorization': `Bearer ${state.accessToken}`
+                }
+            })
+                .then(r => {
+                    console.log(r.data.refresh);
+                    return r;
+                })
+                .catch(err => {
+                    Snackbar.open({
+                        message: "Unable to refresh API token",
+                        type: 'is-warning'
+                    })
+                })
         }
     }
 }

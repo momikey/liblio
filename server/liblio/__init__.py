@@ -106,6 +106,11 @@ def create_app():
     @app.route("/routes")
     def routes():
         return jsonify(repr(app.url_map))
+    
+    # Test route for refreshing (TODO: Convert to JWT token stuff)
+    @app.route("/refresh")
+    def refresh():
+        return jsonify(refresh=str(datetime.now()))
 
     @app.route("/.well-known/nodeinfo")
     def nodeinfo():
