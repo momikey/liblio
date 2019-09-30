@@ -71,4 +71,12 @@ $side-panel: #ffeedd;
     height: 100%;
     padding-top: 32px;
 }
+
+.parent-link {
+    color: $text;
+}
+
+.parent-link:hover {
+    color: $primary;
+}
 </style>

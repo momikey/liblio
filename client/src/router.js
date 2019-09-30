@@ -19,14 +19,21 @@ export default new Router({
                 {
                     path: 'user/:userid',
                     name: 'user-profile',
-                    component: () => import(/* webpackChunkName: "home-user" */ './views/UserPostList.vue'),
+                    component: () => import(/* webpackChunkName: "home" */ './views/UserPostList.vue'),
                     props: true
                 },
 
                 {
                     path: 'tag/:tagname',
                     name: 'tag-display',
-                    component: () => import(/* webpackChunkName: "home-tag" */ './views/TagDisplay.vue'),
+                    component: () => import(/* webpackChunkName: "home" */ './views/TagDisplay.vue'),
+                    props: true
+                },
+
+                {
+                    path: 'post/:postid',
+                    name: 'post-display',
+                    component: () => import(/* webpackChunkName: "home" */ './views/ThreadDisplay.vue'),
                     props: true
                 }
             ]

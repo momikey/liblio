@@ -2,14 +2,21 @@
     <article class="card post-card" v-if="post">
         <!-- Post title -->
         <header class="card-header has-background-primary">
-            <p class="card-header-title has-text-primary-inverted">
-                {{ post.subject }}
-            </p>
+            <router-link :to="postLink" class="card-header-title has-text-primary-inverted">
+                    {{ post.subject }}
+            </router-link>
 
-            <p class="card-header-title is-size-7 has-text-right liblio-post-author has-text-primary-inverted">
+            <router-link :to="authorLink"
+                class="card-header-title is-size-7 has-text-right liblio-post-author has-text-primary-inverted">
                 {{ by(post.user) }}
-            </p>
+            </router-link>
         </header>
+
+        <!-- Link to parent post, if it exists -->
+        <div v-if="post.parent_id" class="parent-link-container">
+            <b-icon icon="reply" custom-class="mdi-flip-h" />
+            <router-link :to="parentLink" class="parent-link">{{ labels.parent }}</router-link>
+        </div>
 
         <!-- Post image, if available -->
         <div v-if="post.image" class="card-image">
@@ -50,12 +57,30 @@ export default {
     data () {
         return {
             isReplying: false,
+
+            labels: {
+                parent: "Parent post"
+            }
         }
     },
 
     props: [
         'post'
     ],
+
+    computed: {
+        postLink () {
+            return `/web/post/${this.post.id}`;
+        },
+
+        authorLink () {
+            return `/web/user/${this.post.user.id}`;
+        },
+
+        parentLink () {
+            return `/web/post/${this.post.parent_id}`;
+        }
+    },
 
     methods: {
         by (author) {
@@ -73,5 +98,15 @@ export default {
 <style lang="scss">
     .liblio-post-author {
         flex-grow: 0;
+    }
+
+    .parent-link-container {
+        margin: 8px 1rem 0 1rem;
+        display: flex;
+        justify-items: center;
+    }
+
+    .parent-link {
+        padding-left: 6px;
     }
 </style>

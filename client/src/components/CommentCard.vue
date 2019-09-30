@@ -5,13 +5,14 @@
             and a timestamp (which we'll make later)
         -->
         <header class="card-header">
-            <p class="card-header-title">
-                {{ post.title || "" }}
-            </p>
+            <router-link :to="postLink" class="card-header-title">
+                {{ post.subject || "" }}
+            </router-link>
 
-            <p class="card-header-title is-size-7 has-text-right liblio-post-author">
-                {{ by(post.author) }}
-            </p>
+            <router-link :to="authorLink"
+                class="card-header-title is-size-7 has-text-right liblio-post-author">
+                {{ by(post.user) }}
+            </router-link>
         </header>
 
         <!-- Main comment content -->
@@ -50,9 +51,19 @@ export default {
         'post'
     ],
 
+    computed: {
+        postLink () {
+            return `/web/post/${this.post.id}`;
+        },
+
+        authorLink () {
+            return `/web/user/${this.post.user.id}`;
+        }
+    },
+
     methods: {
         by (author) {
-            return `by ${author}`;
+            return `by ${author.username}`;
         }
     },
 

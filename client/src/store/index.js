@@ -6,6 +6,7 @@ import VuexPersistence from 'vuex-persist';
  * Store modules
  */
 import authentication from './authentication';
+import posts from './posts';
 import profile from './profile';
 import tags from './tags';
 import users from './users';
@@ -23,6 +24,7 @@ const debug = process.env.NODE_ENV !== 'production'
 const store = new Vuex.Store({
     modules: {
         authentication,
+        posts,
         profile,
         tags,
         users
