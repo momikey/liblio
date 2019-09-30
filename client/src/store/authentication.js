@@ -169,7 +169,7 @@ export default module = {
         refreshToken ({ state, commit }) {
             axios.post('/api/v1/auth/refresh', {}, {
                 headers: {
-                    'Authorization': `Bearer ${state.accessToken}`
+                    'Authorization': `Bearer ${state.refreshToken}`
                 }
             })
                 .then(r => {
