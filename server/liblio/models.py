@@ -52,6 +52,13 @@ likes = db.Table('likes',
     db.Column('post_id', db.Integer, db.ForeignKey('posts.id'), primary_key=True)
 )
 
+# Shares (aka boosts, reposts, announces) connect users' `sharing` property
+# to posts `shares` property.
+shares = db.Table('shares',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('post_id', db.Integer, db.ForeignKey('posts.id'), primary_key=True)
+)
+
 # Follows connect users (`following` property) to other users (`followers` property)
 # This is a self-referential many-to-many relation, probably one of the most
 # convoluted kind there is.
@@ -154,6 +161,9 @@ class User(db.Model):
     # This user's liked posts
     likes = db.relationship('Post', secondary=likes, back_populates='liking')
 
+    # This user's shared posts
+    sharing = db.relationship('Post', secondary=shares, back_populates='shares')
+
     # This user' followers/followed users
     followers = db.relationship('User',
         secondary=follows,
@@ -233,6 +243,9 @@ class Post(db.Model):
 
     # All users who like this post
     liking = db.relationship('User', secondary=likes, back_populates='likes')
+
+    # All users who have shared this post
+    shares = db.relationship('User', secondary=shares, back_populates='sharing')
 
     # Any tags given to this post
     tags = db.relationship('Tag', secondary=post_tags, back_populates='posts')

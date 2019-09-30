@@ -97,7 +97,7 @@ def like_post(post_id):
         db.session.add(post, login)
         db.session.commit()
 
-    return jsonify({ 'likes': [p.id for p in login.user.likes] }), 200
+    return jsonify({ 'likes': [p.id for p in login.user.likes] }), 201
 
 @blueprint.route('/like/<int:post_id>', methods=('DELETE',))
 @jwt_required
@@ -123,6 +123,52 @@ def remove_like(post_id):
     else:
         # Trying to remove the like from a post that isn't liked
         raise APIError(404, "User has not liked this post")
+
+@blueprint.route('/share/<int:post_id>', methods=('POST', 'PUT'))
+@jwt_required
+def share_post(post_id):
+    """Share (aka boost/announce) a given post."""
+    username = get_jwt_identity()
+
+    login = Login.query.filter_by(username=username).first()
+
+    if login is None:
+        raise APIError(400, "User {username} does not exist on this server".format(username=username))
+
+    if post_id not in [p.id for p in login.user.sharing]:
+        post = Post.query.get(post_id)
+        login.user.sharing.append(post)
+
+        login.last_action = datetime.now()
+        db.session.add(post, login)
+        db.session.commit()
+
+    return jsonify(sharing=[p.id for p in login.user.shares]), 201
+
+@blueprint.route('/share/<int:post_id>', methods=('DELETE',))
+@jwt_required
+def unshare_post(post_id):
+    """Remove a share from a given post."""
+    username = get_jwt_identity()
+
+    login = Login.query.filter_by(username=username).first()
+
+    if login is None:
+        raise APIError(400, "User {username} does not exist on this server".format(username=username))
+
+    share_ids = [p.id for p in login.user.sharing]
+    if post_id in share_ids:
+        post = login.user.sharing[share_ids.index(post_id)]
+        del login.user.sharing[share_ids.index(post_id)]
+
+        login.last_action = datetime.now()
+        db.session.add(post, login)
+        db.session.commit()
+
+        return jsonify(sharing=[p.id for p in login.user.sharing]), 200
+    else:
+        # Trying to remove the share from a post that isn't shared
+        raise APIError(404, "User has not shared this post")
 
 @blueprint.route('/tree/<int:post_id>')
 def get_post_tree(post_id):
