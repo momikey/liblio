@@ -9,6 +9,7 @@ import router from '../router';
 export default module = {
     state: {
         accessToken: "",
+        refreshToken: "",
         user: "",
         apiPoll: null
     },
@@ -16,7 +17,9 @@ export default module = {
     getters: {
         user: state => state.user,
 
-        accessToken: state => state.accessToken
+        accessToken: state => state.accessToken,
+
+        refreshToken: state => state.refreshToken
     },
 
     mutations: {
@@ -34,7 +37,11 @@ export default module = {
 
         clearApiPollId (state) {
             state.apiPoll = null;
-        }
+        },
+
+        setRefreshToken (state, token) {
+            state.refreshToken = token;
+        },
     },
 
     actions: {
@@ -49,6 +56,7 @@ export default module = {
                 .then(r => {
                     commit('user', credentials.username);
                     commit('accessToken', r.data.access_token);
+                    commit('setRefreshToken', r.data.refresh_token);
 
                     // router.push('/');
                     dispatch('initiateRefresh');
@@ -140,11 +148,13 @@ export default module = {
         },
 
         /**
-         * Start refreshing the API token
+         * Start refreshing the API token at 5 minute intervals.
+         * Access tokens are good for 15 minutes, so the idea is
+         * that this gives us a couple of retries.
          *
-         * @param { commit }
+         * @param { commit, dispatch }
          */
-        initiateRefresh({ commit }) {
+        initiateRefresh({ commit, dispatch }) {
             commit('setApiPollId', window.setInterval(() => {
                 dispatch('refreshToken');
             }, 5 * 60 * 1000));
@@ -157,15 +167,13 @@ export default module = {
          * @param token The new token
          */
         refreshToken ({ state, commit }) {
-            // commit('accessToken', token);
-            console.log(Date.now());
-            axios.get(`/refresh?time=${Date.now()}`, {
+            axios.post('/api/v1/auth/refresh', {}, {
                 headers: {
                     'Authorization': `Bearer ${state.accessToken}`
                 }
             })
                 .then(r => {
-                    console.log(r.data.refresh);
+                    commit('accessToken', r.data.access_token);
                     return r;
                 })
                 .catch(err => {

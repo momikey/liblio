@@ -15,7 +15,7 @@ export default {
     },
 
     mounted () {
-        if (this.$store.getters.user && this.$storegetters.accessToken) {
+        if (this.$store.getters.user && this.$store.getters.accessToken) {
             this.$store.dispatch('initiateRefresh');
         }
     }

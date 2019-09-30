@@ -3,7 +3,8 @@
 from datetime import datetime, timedelta
 
 from flask import Blueprint, request, jsonify, make_response, current_app
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, \
+     create_refresh_token, jwt_refresh_token_required
 from webargs import fields, validate
 from webargs.flaskparser import use_args
 
@@ -36,7 +37,7 @@ request_schemas = {
 @blueprint.route('/create-account', methods=('POST',))
 @use_args(request_schemas['create_account'])
 def create_account(args):
-    "Create a new account on this server."
+    """Create a new account on this server."""
     if request.method == 'POST':
 
         # TODO: Check for a user who is already logged in
@@ -71,13 +72,13 @@ def create_account(args):
 
 @blueprint.route('/create-account', methods=('GET',))
 def create_account_get():
-    "This endpoint does not support GET, so send a formatted response."
+    """This endpoint does not support GET, so send a formatted response."""
     raise APIError(405, "POST to this endpoint to create an account")
 
 @blueprint.route('/login', methods=("POST",))
 @use_args(request_schemas['login'])
 def login(args):
-    "Login to this server, receiving an authentication token in response."
+    """Log in to this server, receiving an authentication token in response."""
 
     username = args['username']
     password = args['password']
@@ -94,11 +95,24 @@ def login(args):
     db.session.commit()
 
     token = create_access_token(username)
-    return make_response(jsonify(access_token=token), 200)
+    refresh = create_refresh_token(username)
+    return jsonify(access_token=token, refresh_token=refresh), 200
 
 @blueprint.route('/logout', methods=('POST',))
 @jwt_required
 def logout():
+    """Log out of this server."""
+
     ### TODO: Token revocation, blacklist, or whatever
     username = get_jwt_identity()
     return make_response(jsonify(logout=username), 200)
+
+@blueprint.route('/refresh', methods=('POST',))
+@jwt_refresh_token_required
+def refresh():
+    """Refresh an API access token if given a valid refresh token."""
+
+    username = get_jwt_identity()
+    token = create_access_token(username)
+
+    return jsonify(access_token=token), 200
