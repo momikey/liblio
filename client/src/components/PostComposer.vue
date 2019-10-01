@@ -22,12 +22,13 @@
                         @click="onPost"
                         :disabled="!post.body.length"
                         icon-left="email"
+                        :class="post.body.length ? 'is-primary' : false"
                     >
-                        Post
+                        {{ labels.post }}
                     </b-button>
 
                     <b-button @click="onClear" class="">
-                        Clear
+                        {{ labels.clear }}
                     </b-button>
                 </div>
             </div>
@@ -50,6 +51,8 @@ export default {
             labels: {
                 subject: "Subject",
                 message: "Message",
+                post: "Post",
+                clear: "Clear",
 
                 placeholders: {
                     subject: "Announcing...",
@@ -66,7 +69,11 @@ export default {
     methods: {
         onPost () {
             if (this.post.body) {
-                console.log(`Posting with subject ${this.post.subject} and body ${this.post.body}`);
+                this.$emit('post-created', {
+                    subject: this.post.subject,
+                    body: this.post.body,
+                    tags: this.post.tags
+                })
             } else {
                 this.notifyError(this.labels.errors.noPostBody);
             }
@@ -92,6 +99,7 @@ export default {
 <style lang="scss">
     .composer {
         margin-bottom: 1rem;
+        margin-top: 4px;
     }
 
     .composer-actions {

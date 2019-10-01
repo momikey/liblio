@@ -35,6 +35,12 @@ export default new Router({
                     name: 'post-display',
                     component: () => import(/* webpackChunkName: "home" */ './views/ThreadDisplay.vue'),
                     props: true
+                },
+
+                {
+                    path: 'new-post',
+                    name: 'new-post',
+                    component: () => import(/* webpackChunkName: "home" */ './views/NewPost.vue'),
                 }
             ]
         },

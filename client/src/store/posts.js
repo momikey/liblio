@@ -4,6 +4,7 @@
 
 import axios from "axios";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
+import router from "../router";
 
 export default module = {
     state: {
@@ -37,6 +38,38 @@ export default module = {
                         type: 'is-warning'
                     })
                 })
-        }
+        },
+
+        newPost ({ commit }, { post, token }) {
+            console.log(post, token);
+            let body = {
+                subject: post.subject,
+                source: post.body,
+                /* TODO: Tag support */
+                /* tags: post.tags */
+            };
+
+            if (post.parent) {
+                body.parent = post.parent;
+            }
+
+            axios.post('/api/v1/post/new', body, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(r => {
+                    router.push("/web");
+                })
+                .catch(err => {
+                    console.log(post, token);
+                    console.log(err.errors);
+
+                    Snackbar.open({
+                        message: `Unable to post: ${err.message}`,
+                        type: 'is-danger'
+                    })
+                })
+        },
     }
 }

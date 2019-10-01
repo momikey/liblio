@@ -24,6 +24,20 @@
             <tag-list
                 :tags="tags"
             />
+
+            <div class="create-buttons">
+                <b-button icon-left="plus" class="is-primary create-button"
+                    tag="router-link" to="/web/new-post" append
+                >
+                    {{ labels.newPost }}
+                </b-button>
+
+                <b-button icon-left="plus" class="is-primary create-button"
+                    tag="router-link" to="/web/new-announcement" append
+                >
+                    {{ labels.newAnnouncement }}
+                </b-button>
+            </div>
         </div>
     </section>
 </template>
@@ -38,7 +52,9 @@ export default {
     data () {
         return {
             labels : {
-                noName: '(no name given)'
+                noName: '(no name given)',
+                newPost: 'Make a post',
+                newAnnouncement: 'Show off your work'
             },
 
             tags: [
@@ -79,5 +95,15 @@ export default {
 <style lang="scss">
     .creator-avatar-figure > img {
         background-color: gray;
+    }
+
+    .create-buttons {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .create-button {
+        margin: 8px auto;
     }
 </style>
