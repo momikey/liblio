@@ -85,5 +85,27 @@ def edit_profile(args):
 
     return make_response(jsonify(msg="Profile updated"), 200)
 
+@blueprint.route("/me", methods=('GET',))
+@jwt_required
+def get_my_info():
+    """Get the likes, shares, and following/followed lists for the logged-in user."""
+
+    username = get_jwt_identity()
+    origin = current_app.config['SERVER_ORIGIN']
+
+    profile = User.query.filter_by(username=username, origin=origin).first()
+    if profile is None:
+        # This shouldn't happen.
+        raise APIError(400, "User {username} does not exist on this server".format(username=username))
+
+    # Update last activity time
+    profile.login.last_action = datetime.now()
+
+    return jsonify(
+        likes=[l.id for l in profile.likes],
+        shares=[s.id for s in profile.sharing],
+        followers=[f.id for f in profile.followers],
+        following=[f.id for f in profile.following]
+    ), 200
 
 ### Helper functions

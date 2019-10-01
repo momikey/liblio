@@ -188,7 +188,10 @@ class User(db.Model):
             origin=self.origin,
             display_name=self.display_name,
             bio=self.bio,
-            private=self.private
+            private=self.private,
+            followers=[f.id for f in self.followers],
+            following=[f.id for f in self.following],
+            tags=[t.name for t in self.tags]
         )
 
 class Post(db.Model):
