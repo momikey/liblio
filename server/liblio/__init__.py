@@ -12,6 +12,8 @@ from flask_migrate import Migrate
 from flask_executor import Executor
 from flask_jwt_extended import JWTManager
 
+from webargs import flaskparser
+
 from werkzeug.exceptions import HTTPException
 
 from .error import APIError
@@ -22,6 +24,7 @@ cors = CORS()
 migrate = Migrate()
 executor = Executor()
 jwt = JWTManager()
+parser = flaskparser.FlaskParser()
 
 LIBLIO_VERSION = "0.0.1"
 
@@ -94,6 +97,11 @@ def create_app():
         messages = error.data.get('messages', ["Invalid request"])
 
         return handle_api_error(APIError(error.code, "Validation failure", payload={"errors": messages}))
+
+    @parser.error_handler
+    def handle_webargs_error(error, req, schema, status_code, headers):
+        return handle_api_error(APIError(status_code, "Validation failure",
+            payload={"errors": error.messages}))
 
     # Routes (we'll factor these out later)
 

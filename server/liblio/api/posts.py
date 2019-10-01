@@ -21,7 +21,7 @@ request_schemas = {
     'new_post': {
         'subject': fields.Str(required=False),
         'source': fields.Str(required=True),
-        'parent_id': fields.Int(require=False)
+        'parent_id': fields.Int(required=False)
     }
 }
 
