@@ -11,11 +11,14 @@
                 </b-button>
             </b-tooltip>
 
-            <b-tooltip :label="labels.announce" animated :delay="500">
+            <b-tooltip :label="labels.share" animated :delay="500">
                 <b-button class="is-text"
-                    @click="onAnnounce"
+                    @click="onShare"
                 >
-                    <b-icon icon="repeat" />
+                    <b-icon icon="repeat" v-if="user && isPostShared(postId)"
+                        class="is-shared-icon"
+                    />
+                    <b-icon icon="repeat" v-else />
                 </b-button>
             </b-tooltip>
 
@@ -23,7 +26,10 @@
                 <b-button class="is-text"
                     @click="onLike"
                 >
-                    <b-icon icon="star-outline" />
+                    <b-icon icon="star" v-if="user && isPostLiked(postId)"
+                        class="has-text-liked-icon"
+                    />
+                    <b-icon icon="star-outline" v-else />
                 </b-button>
             </b-tooltip>
         </span>
@@ -31,15 +37,26 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
     data () {
         return {
             labels: {
                 reply: "Reply",
-                announce: "Announce",
+                share: "Share",
                 like: "Like",
             }
         }
+    },
+
+    props: [
+        'postId'
+    ],
+
+    computed: {
+        ...mapGetters(
+            ['isPostLiked', 'isPostShared', 'user']
+        )
     },
 
     methods: {
@@ -51,8 +68,8 @@ export default {
             this.$emit('action-like');
         },
 
-        onAnnounce () {
-            this.$emit('action-announce');
+        onShare () {
+            this.$emit('action-share');
         }
     }
 }
@@ -65,4 +82,5 @@ export default {
         padding-left: 3rem;
         padding-right: 3rem;
     }
+
 </style>

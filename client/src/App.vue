@@ -28,6 +28,18 @@ export default {
 
 /* custom styles go here */
 $mdi-font-path: "~@mdi/font/fonts";
+
+$liked-icon: $yellow;
+$shared-icon: $primary;
+
+/* Custom colors */
+$addColors: (
+    "liked-icon": ($liked-icon, findColorInvert($liked-icon)),
+    "shared-icon": ($shared-icon, findColorInvert($shared-icon))
+);
+
+$colors: map-merge($colors, $addColors);
+
 @import "~@mdi/font/scss/materialdesignicons";
 
 @import "~bulma";
@@ -79,4 +91,12 @@ $side-panel: #ffeedd;
 .parent-link:hover {
     color: $primary;
 }
+
+// .is-liked-icon {
+//     color: $liked-icon;
+// }
+
+// .is-shared-icon {
+//     color: $shared-icon;
+// }
 </style>

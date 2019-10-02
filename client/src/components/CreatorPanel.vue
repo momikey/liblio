@@ -83,6 +83,7 @@ export default {
     mounted () {
         if (this.$store.getters.user) {
             this.$store.dispatch('getProfile');
+            this.$store.dispatch('getMyInfo');
         }
     },
 

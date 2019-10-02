@@ -38,6 +38,7 @@
         <!-- Post actions -->
         <posting-actions-footer
             @action-reply="isReplying = !isReplying"
+            :postId="post.id"
         />
 
         <!-- Reply box -->

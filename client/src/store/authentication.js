@@ -91,6 +91,7 @@ export default module = {
                     commit('user', '');
                     commit('accessToken', '');
                     commit('clearProfile');
+                    commit('clearInfo');
 
                     window.clearInterval(state.apiPoll);
                     commit('clearApiPollId')
