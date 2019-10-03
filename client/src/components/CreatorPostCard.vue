@@ -38,6 +38,8 @@
         <!-- Post actions -->
         <posting-actions-footer
             @action-reply="isReplying = !isReplying"
+            @action-like="onLike"
+            @action-share="onShare"
             :postId="post.id"
         />
 
@@ -53,6 +55,7 @@
 <script>
 import PostingActionsFooter from '@/components/PostingActionsFooter.vue';
 import CommentComposer from '@/components/CommentComposer.vue';
+import { mapGetters } from 'vuex';
 
 export default {
     data () {
@@ -70,6 +73,10 @@ export default {
     ],
 
     computed: {
+        ...mapGetters([
+            'myLikes', 'myShares', 'accessToken'
+        ]),
+
         postLink () {
             return `/web/post/${this.post.id}`;
         },
@@ -86,6 +93,24 @@ export default {
     methods: {
         by (author) {
             return `by ${author.username}`;
+        },
+
+        onLike () {
+            if (this.myLikes.indexOf(this.post.id) === -1) {
+                this.$store.dispatch('likePost', {
+                    postId: this.post.id,
+                    token: this.accessToken
+                });
+            }
+        },
+
+        onShare () {
+            if (this.myShares.indexOf(this.post.id) === -1) {
+                this.$store.dispatch('sharePost', {
+                    postId: this.post.id,
+                    token: this.accessToken
+                })
+            }
         }
     },
 

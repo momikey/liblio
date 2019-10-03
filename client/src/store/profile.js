@@ -52,14 +52,18 @@ export default module = {
         },
 
         clearInfo (state) {
-            state.info.likes.splice(0);
-            state.info.shares.splice(0);
-            state.info.followers.splice(0);
-            state.info.following.splice(0);
+            state.info.likes = [];
+            state.info.shares = [];
+            state.info.followers = [];
+            state.info.following = [];
         },
 
-        addLike (state, id) {
-            state.likes
+        updateLikes (state, likes) {
+            state.info.likes = likes;
+        },
+
+        updateShares (state, shares) {
+            state.info.shares = shares;
         }
     },
 

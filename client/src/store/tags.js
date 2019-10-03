@@ -21,7 +21,8 @@ export default module = {
 
     mutations: {
         allTags (state, tags) {
-            state.tags.splice(0, state.tags.length, ...tags);
+            // state.tags.splice(0, state.tags.length, ...tags);
+            state.tags = tags;
         }
     },
 

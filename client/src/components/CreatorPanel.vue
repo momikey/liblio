@@ -81,7 +81,7 @@ export default {
     },
 
     mounted () {
-        if (this.$store.getters.user) {
+        if (this.user) {
             this.$store.dispatch('getProfile');
             this.$store.dispatch('getMyInfo');
         }

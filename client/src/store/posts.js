@@ -19,7 +19,8 @@ export default module = {
 
     mutations: {
         thread (state, tree) {
-            state.currentThread.splice(0, state.currentThread.length, ...tree);
+            // state.currentThread.splice(0, state.currentThread.length, ...tree);
+            state.currentThread = tree;
         },
     },
 
@@ -41,7 +42,6 @@ export default module = {
         },
 
         newPost ({ commit }, { post, token }) {
-            console.log(post, token);
             let body = {
                 subject: post.subject,
                 source: post.body,
@@ -62,14 +62,51 @@ export default module = {
                     router.push("/web");
                 })
                 .catch(err => {
-                    console.log(post, token);
-                    console.log(err.errors);
-
                     Snackbar.open({
                         message: `Unable to post: ${err.message}`,
                         type: 'is-danger'
                     })
                 })
         },
+
+        likePost ({ commit }, { postId, token }) {
+            axios.post(`/api/v1/post/like/${postId}`, {
+                // Likes don't really need a request body, do they?
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(r => {
+                    commit('updateLikes', r.data.likes, { root: true });
+                })
+                .catch(err => {
+                    Snackbar.open({
+                        message: `Unable to like post: ${err.message}`,
+                        type: 'is-warning'
+                    })
+
+                    console.log(err);
+                })
+        },
+
+        sharePost ({ commit }, { postId, token }) {
+            axios.post(`/api/v1/post/share/${postId}`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(r => {
+                    commit('updateShares', r.data.sharing, { root: true });
+                })
+                .catch(err => {
+                    Snackbar.open({
+                        message: `Unable to share post: ${err.message}`,
+                        type: 'is-warning'
+                    })
+
+                    console.log(err);
+                })
+        }
     }
 }

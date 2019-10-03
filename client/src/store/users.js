@@ -18,12 +18,14 @@ export default module = {
     },
 
     mutations: {
-        saveUsers (state, u) {
-            state.users.splice(0, state.users.length, ...u);
+        saveUsers (state, users) {
+            // state.users.splice(0, state.users.length, ...u);
+            state.users = users;
         },
 
         saveUserPosts (state, posts) {
-            state.currentUserPosts.splice(0, state.currentUserPosts.length, ...posts);
+            // state.currentUserPosts.splice(0, state.currentUserPosts.length, ...posts);
+            state.currentUserPosts = posts;
         }
     },
 
