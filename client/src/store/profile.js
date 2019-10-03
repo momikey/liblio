@@ -14,10 +14,10 @@ export default module = {
             tags: []
         },
         info: {
-            likes: new Set(),
-            shares: new Set(),
-            followers: new Set(),
-            following: new Set()
+            likes: [],
+            shares: [],
+            followers: [],
+            following: []
         }
     },
 
@@ -29,8 +29,8 @@ export default module = {
         myFollowers: state => state.info.followers,
         myFollowed: state => state.info.following,
 
-        isPostLiked: state => id => state.info.likes.has(id),
-        isPostShared: state => id => state.info.shares.has(id),
+        isPostLiked: state => id => state.info.likes.indexOf(id) > -1,
+        isPostShared: state => id => state.info.shares.indexOf(id) > -1,
     },
 
     mutations: {
@@ -39,18 +39,7 @@ export default module = {
         },
 
         myInfo (state, info) {
-            // Object.assign(state.info, info);
-            console.log(info, state.info);
-
-            // JSON can't encode sets, so the back end uses arrays instead.
-            const addToSet = (set, vals) => vals.forEach(e => set.add(e));
-
-            addToSet(state.info.likes, info.likes);
-            addToSet(state.info.shares, info.shares);
-            addToSet(state.info.followers, info.followers);
-            addToSet(state.info.following, info.following);
-
-            console.log(state.info.likes);
+            Object.assign(state.info, info);
         },
 
         clearProfile (state) {
@@ -63,16 +52,10 @@ export default module = {
         },
 
         clearInfo (state) {
-            // state.info = {
-            //     likes: [],
-            //     shares: [],
-            //     followers: [],
-            //     following: []    
-            // }
-            state.info.likes.clear();
-            state.info.shares.clear();
-            state.info.followers.clear();
-            state.info.following.clear();
+            state.info.likes.splice(0);
+            state.info.shares.splice(0);
+            state.info.followers.splice(0);
+            state.info.following.splice(0);
         },
 
         addLike (state, id) {
