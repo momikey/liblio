@@ -143,7 +143,7 @@ def share_post(post_id):
         db.session.add(post, login)
         db.session.commit()
 
-    return jsonify(sharing=[p.id for p in login.user.shares]), 201
+    return jsonify(sharing=[p.id for p in login.user.sharing]), 201
 
 @blueprint.route('/share/<int:post_id>', methods=('DELETE',))
 @jwt_required
