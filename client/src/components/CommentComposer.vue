@@ -47,10 +47,28 @@ export default {
         }
     },
 
+    props: [
+        'parent'
+    ],
+
     methods: {
         onPost () {
             if (this.post.body) {
-                console.log(`Posting comment ${this.post.body}`);
+                let p = {
+                    body: this.post.body,
+                    parent: this.parent.id
+                }
+
+                if (this.parent.subject) {
+                    p.subject = this.parent.subject;
+                }
+
+                this.$store.dispatch('newPost', {
+                    post: p,
+                    token: this.$store.getters.accessToken
+                });
+
+                this.$emit('replied');
             } else {
                 this.notifyError(this.labels.errors.commentEmpty);
             }

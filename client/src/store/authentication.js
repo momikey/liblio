@@ -82,6 +82,9 @@ export default module = {
          * @param { state, commit }
          */
         logout ({ state, commit }) {
+            window.clearInterval(state.apiPoll);
+            commit('clearApiPollId')
+
             axios.post('/api/v1/auth/logout', null, {
                 headers: {
                     'Authorization': `Bearer ${state.accessToken}`
@@ -93,15 +96,13 @@ export default module = {
                     commit('clearProfile');
                     commit('clearInfo');
 
-                    window.clearInterval(state.apiPoll);
-                    commit('clearApiPollId')
-
                     return r;
                 })
                 .catch(err => {
                     commit('user', '');
                     commit('accessToken', '');
                     commit('clearProfile');
+                    commit('clearInfo');
                     
                     Snackbar.open({
                         message: "Could not log out",

@@ -76,11 +76,21 @@ $side-panel: #ffeedd;
 .columns {
     padding-left: 24px;
     padding-right: 24px;
+    overflow: hidden;
+    max-height: 100vh;
+}
+
+.column.is-two-thirds {
+    max-height: calc(100vh - 108px);
+    overflow-y: auto;
+}
+
+.column.is-one-third {
+    max-height: calc(100vh - 100px);
 }
 
 .side-panel {
     background-color: #ffeedd;
-    height: 100%;
     padding-top: 32px;
 }
 
@@ -90,6 +100,15 @@ $side-panel: #ffeedd;
 
 .parent-link:hover {
     color: $primary;
+}
+
+.post-metadata {
+    display: inline-flex;
+}
+
+.post-metadata span {
+    flex-shrink: 1;
+    padding: 0;
 }
 
 // .is-liked-icon {

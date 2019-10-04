@@ -41,7 +41,7 @@ export default module = {
                 })
         },
 
-        newPost ({ commit }, { post, token }) {
+        newPost ({ commit, dispatch, getters }, { post, token }) {
             let body = {
                 subject: post.subject,
                 source: post.body,
@@ -50,7 +50,7 @@ export default module = {
             };
 
             if (post.parent) {
-                body.parent = post.parent;
+                body.parent_id = post.parent;
             }
 
             axios.post('/api/v1/post/new', body, {
@@ -59,7 +59,17 @@ export default module = {
                 }
             })
                 .then(r => {
-                    router.push("/web");
+                    if (!post.parent) {
+                        // Top-level post can redirect to the main timeline
+                        router.push("/web");
+                    } else {
+                        // Replies can slot into the thread list
+
+                        if (post.parent === getters.threadParent.id ||
+                            getters.threadChildren.filter(e => post.parent === e.id).length) {
+                                dispatch('getThread', getters.threadParent.id);
+                        }
+                    }
                 })
                 .catch(err => {
                     Snackbar.open({

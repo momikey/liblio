@@ -6,10 +6,17 @@
                     {{ post.subject }}
             </router-link>
 
-            <router-link :to="authorLink"
-                class="card-header-title is-size-7 has-text-right liblio-post-author has-text-primary-inverted">
-                {{ by(post.user) }}
-            </router-link>
+            <div class="post-metadata">
+                <span class="post-date card-header-title is-size-7 has-text-primary-inverted">
+                    {{ dateToNow(post.timestamp) }}
+                </span>
+                <span>
+                    <router-link :to="authorLink"
+                        class="card-header-title is-size-7 has-text-right has-text-primary-inverted liblio-post-author">
+                        {{ by(post.user) }}
+                    </router-link>
+                </span>
+            </div>
         </header>
 
         <!-- Link to parent post, if it exists -->
@@ -29,7 +36,6 @@
         <div class="card-content">
             <div class="content">
 
-
                 <!-- TODO: sanitize, format, etc. -->
                 {{ post.content }}
             </div>
@@ -47,6 +53,8 @@
         <div v-if="isReplying">
             <comment-composer
                 @post-cancel="isReplying = false"
+                @replied="isReplying = false"
+                :parent="post"
             />
         </div>
     </article>
@@ -56,6 +64,7 @@
 import PostingActionsFooter from '@/components/PostingActionsFooter.vue';
 import CommentComposer from '@/components/CommentComposer.vue';
 import { mapGetters } from 'vuex';
+import { dateToNow } from "@/modules/post";
 
 export default {
     data () {
@@ -91,6 +100,8 @@ export default {
     },
 
     methods: {
+        dateToNow,
+
         by (author) {
             return `by ${author.username}`;
         },

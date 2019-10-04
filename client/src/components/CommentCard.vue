@@ -9,10 +9,17 @@
                 {{ post.subject || "" }}
             </router-link>
 
-            <router-link :to="authorLink"
-                class="card-header-title is-size-7 has-text-right liblio-post-author">
-                {{ by(post.user) }}
-            </router-link>
+            <div class="post-metadata">
+                <span class="post-date card-header-title is-size-7">
+                    {{ dateToNow(post.timestamp) }}
+                </span>
+                <span>
+                    <router-link :to="authorLink"
+                        class="card-header-title is-size-7 has-text-right liblio-post-author">
+                        {{ by(post.user) }}
+                    </router-link>
+                </span>
+            </div>
         </header>
 
         <!-- Main comment content -->
@@ -34,6 +41,8 @@
         <div v-if="isReplying">
             <comment-composer
                 @post-cancel="isReplying = false"
+                @replied="isReplying = false"
+                :parent="post"
             />
         </div>
     </section>    
@@ -43,6 +52,7 @@
 import PostingActionsFooter from '@/components/PostingActionsFooter.vue';
 import CommentComposer from '@/components/CommentComposer.vue';
 import { mapGetters } from 'vuex';
+import { dateToNow } from "@/modules/post";
 
 export default {
     data () {
@@ -74,12 +84,13 @@ export default {
     },
 
     methods: {
+        dateToNow,
+
         by (author) {
             return `by ${author.username}`;
         },
 
         onLike () {
-            console.log(this.post.id);
             if (this.myLikes.indexOf(this.post.id) === -1) {
                 this.$store.dispatch('likePost', {
                     postId: this.post.id,
