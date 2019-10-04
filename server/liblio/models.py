@@ -4,6 +4,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 import re
 
+from sqlalchemy.sql import expression
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.types import TIMESTAMP
+
 from liblio.helpers import flake_id, printable_id
 
 # Create the DB object, so we can build models from it.
@@ -43,6 +47,17 @@ def create_tag_uri(name):
     path = "tag/{name}".format(name=name)
 
     return "{scheme}://{origin}/{path}".format(scheme=scheme, origin=origin, path=path)
+
+# UTC timestamp handling
+# TODO: Other databases, if we want to support them
+class utcnow(expression.FunctionElement):
+    """UTC timestamp expression class, as per SQLAlchemy docs"""
+    type = TIMESTAMP()
+
+@compiles(utcnow, 'postgresql')
+def utcnow_pg(element, compiler, **kwargs):
+    """UTC timestamps for Postgres"""
+    return "TIMEZONE('utc', CURRENT_TIMESTAMP)"
 
 ### Association Tables ###
 
@@ -236,7 +251,7 @@ class Post(db.Model):
 
     # This post's timestamp
     # For local posts, this will be generated; foreign posts will provide it.
-    timestamp = db.Column(db.TIMESTAMP, nullable=False, server_default=db.func.now())
+    timestamp = db.Column(TIMESTAMP, nullable=False, server_default=utcnow())
 
     # The post's parent and/or children
     # This uses a self-referential foreign key. If that's NULL, then this is
