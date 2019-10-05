@@ -8,13 +8,16 @@ import router from "../router";
 
 export default module = {
     state: {
-        currentThread: []
+        currentThread: [],
+        timeline: []
     },
 
     getters: {
         thread: state => state.currentThread,
         threadParent: state => state.currentThread.length ? state.currentThread[0] : null,
-        threadChildren: state => state.currentThread.length ? state.currentThread.slice(1) : []
+        threadChildren: state => state.currentThread.length ? state.currentThread.slice(1) : [],
+
+        timeline: state => state.timeline
     },
 
     mutations: {
@@ -22,6 +25,18 @@ export default module = {
             // state.currentThread.splice(0, state.currentThread.length, ...tree);
             state.currentThread = tree;
         },
+
+        timeline (state, posts) {
+            state.timeline = posts;
+        },
+
+        addToTimeline (state, posts) {
+            state.timeline.push(...posts);
+        },
+
+        clearTimeline (state) {
+            state.timeline = [];
+        }
     },
 
     actions: {
@@ -70,6 +85,8 @@ export default module = {
                                 dispatch('getThread', getters.threadParent.id);
                         }
                     }
+
+                    return r;
                 })
                 .catch(err => {
                     Snackbar.open({
@@ -89,6 +106,8 @@ export default module = {
             })
                 .then(r => {
                     commit('updateLikes', r.data.likes, { root: true });
+
+                    return r;
                 })
                 .catch(err => {
                     Snackbar.open({
@@ -108,6 +127,8 @@ export default module = {
             })
                 .then(r => {
                     commit('updateShares', r.data.sharing, { root: true });
+
+                    return r;
                 })
                 .catch(err => {
                     Snackbar.open({
@@ -116,6 +137,34 @@ export default module = {
                     })
 
                     console.log(err);
+                })
+        },
+
+        getPublicPosts({ commit }, { since, max }) {
+            const ts = since ? Math.trunc(since / 1000) : undefined;
+
+            axios.get('/api/v1/post/public', {
+                params: {
+                    since: ts,
+                    max    
+                }
+            })
+                .then(r => {
+                    if (since) {
+                        commit('addToTimeline', r.data);
+                    } else {
+                        commit('timeline', r.data);
+                    }
+
+                    return r;
+                })
+                .catch(err => {
+                    Snackbar.open({
+                        message: `Unable to fetch timeline: ${err.message}`,
+                        type: 'is-warning'
+                    });
+
+                    console.error(err);
                 })
         }
     }

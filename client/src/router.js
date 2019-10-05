@@ -13,9 +13,14 @@ export default new Router({
         
         {
             path: '/web',
-            name: 'home',
             component: Home,
             children: [
+                {
+                    path: '',
+                    name: 'timeline',
+                    component: () => import(/* webpackChunkName: "home" */ './views/Timeline.vue')
+                },
+
                 {
                     path: 'user/:userid',
                     name: 'user-profile',
