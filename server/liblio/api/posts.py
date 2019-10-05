@@ -1,6 +1,6 @@
 ### CRUD operations for posts, except probably not the U part
 
-from flask import Blueprint, current_app, jsonify, make_response
+from flask import Blueprint, current_app, jsonify, make_response, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from webargs import fields, validate
 from webargs.flaskparser import use_args
@@ -46,6 +46,18 @@ def get_by_flake(flake_id):
         return jsonify(post.to_dict()), 200
     else:
         raise APIError(404, "Post with Flake ID {id} does not exist on this server".format(id=flake_id))
+
+@blueprint.route('/public')
+def get_public_posts():
+    """Get the posts in the public timeline."""
+    since = datetime.utcfromtimestamp(int(request.args.get('since', 0)))
+    count = request.args.get('max', None)
+
+    query = Post.query.filter(Post.timestamp > since).filter(User.private is not True).order_by(Post.timestamp.desc())
+
+    results = query.all() if count is None else query[:int(count)]
+
+    return jsonify([r.to_dict() for r in results]), 200
 
 @blueprint.route('/new', methods=('POST',))
 @jwt_required
