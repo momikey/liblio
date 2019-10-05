@@ -18,7 +18,8 @@ export default module = {
             shares: [],
             followers: [],
             following: []
-        }
+        },
+        notifications: [],
     },
 
     getters: {
@@ -28,6 +29,8 @@ export default module = {
         myShares: state => state.info.shares,
         myFollowers: state => state.info.followers,
         myFollowed: state => state.info.following,
+
+        myNotifications: state => state.notifications,
 
         isPostLiked: state => id => state.info.likes.indexOf(id) > -1,
         isPostShared: state => id => state.info.shares.indexOf(id) > -1,

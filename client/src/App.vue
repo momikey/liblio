@@ -76,7 +76,6 @@ $side-panel: #ffeedd;
 .columns {
     padding-left: 24px;
     padding-right: 24px;
-    overflow: hidden;
     max-height: 100vh;
 }
 

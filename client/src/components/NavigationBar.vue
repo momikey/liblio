@@ -45,7 +45,7 @@
                         paddingless
                     >
                         <notifications-list
-                            :notifications="notifications"
+                            :notifications="myNotifications"
                         />
                     </b-dropdown-item>
                 </b-dropdown>
@@ -67,14 +67,11 @@
 
 <script>
 import NotificationsList from '@/components/NotificationsList.vue';
+import { mapGetters } from 'vuex';
 
 export default {
     data () {
         return {
-            notifications: this.$store.state.notifications,
-
-            testingText: "",
-
             labels: {
                 notifications: "Notifications",
                 logout: "Log out"
@@ -83,8 +80,12 @@ export default {
     },
 
     computed: {
+        ...mapGetters([
+            'myNotifications'
+        ]),
+
         unreadNotifications () {
-            return this.notifications.filter(n => n.unread).length
+            return this.myNotifications.filter(n => n.unread).length
         },
 
         unreadFormatted () {
