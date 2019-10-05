@@ -22,6 +22,12 @@
             </div>
         </header>
 
+        <!-- Link to parent post, if it exists -->
+        <div v-if="post.parent_id" class="parent-link-container">
+            <b-icon icon="reply" custom-class="mdi-flip-h" />
+            <router-link :to="parentLink" class="parent-link">{{ labels.parent }}</router-link>
+        </div>
+
         <!-- Main comment content -->
         <div class="card-content">
             <div class="content">
@@ -58,6 +64,10 @@ export default {
     data () {
         return {
             isReplying: false,
+
+            labels: {
+                parent: "Parent post"
+            }
         }
     },
 
