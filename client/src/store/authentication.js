@@ -10,6 +10,7 @@ export default module = {
     state: {
         accessToken: "",
         refreshToken: "",
+        role: "",
         user: "",
         apiPoll: null
     },
@@ -19,7 +20,9 @@ export default module = {
 
         accessToken: state => state.accessToken,
 
-        refreshToken: state => state.refreshToken
+        refreshToken: state => state.refreshToken,
+
+        isAdmin: state => state.role === 'admin'
     },
 
     mutations: {
@@ -31,16 +34,20 @@ export default module = {
             state.user = username;
         },
 
+        refreshToken (state, token) {
+            state.refreshToken = token;
+        },
+
+        role (state, role) {
+            state.role = role;
+        },
+
         setApiPollId (state, id) {
             state.apiPoll = id;
         },
 
         clearApiPollId (state) {
             state.apiPoll = null;
-        },
-
-        setRefreshToken (state, token) {
-            state.refreshToken = token;
         },
     },
 
@@ -56,7 +63,8 @@ export default module = {
                 .then(r => {
                     commit('user', credentials.username);
                     commit('accessToken', r.data.access_token);
-                    commit('setRefreshToken', r.data.refresh_token);
+                    commit('refreshToken', r.data.refresh_token);
+                    commit('role', r.data.role);
 
                     // router.push('/');
                     dispatch('initiateRefresh');
@@ -66,6 +74,8 @@ export default module = {
                 .catch(err => {
                     commit('user', '');
                     commit('accessToken', '');
+                    commit('refreshToken', '');
+                    commit('role', '');
 
                     console.log(err);
                     
@@ -93,6 +103,8 @@ export default module = {
                 .then(r => {
                     commit('user', '');
                     commit('accessToken', '');
+                    commit('refreshToken', '');
+                    commit('role', '');
                     commit('clearProfile');
                     commit('clearInfo');
 
@@ -101,6 +113,8 @@ export default module = {
                 .catch(err => {
                     commit('user', '');
                     commit('accessToken', '');
+                    commit('refreshToken', '');
+                    commit('role', '');
                     commit('clearProfile');
                     commit('clearInfo');
                     

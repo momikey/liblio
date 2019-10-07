@@ -96,7 +96,7 @@ def login(args):
 
     token = create_access_token(username)
     refresh = create_refresh_token(username)
-    return jsonify(access_token=token, refresh_token=refresh), 200
+    return jsonify(access_token=token, refresh_token=refresh, role=login.role.name), 200
 
 @blueprint.route('/logout', methods=('POST',))
 @jwt_required

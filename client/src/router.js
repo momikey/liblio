@@ -84,9 +84,9 @@ export default new Router({
         },
         
         {
-            path: '/sandbox',
-            name: 'sandbox',
-            component: () => import(/* webpackChunkName: "sandbox" */ './views/Sandbox.vue')
-        }
+            path: '/admin',
+            name: 'admin',
+            component: () => import(/* webpackChunkName: "admin" */ './views/AdminPanel.vue')
+        },
     ]
 })

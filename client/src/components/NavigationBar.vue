@@ -17,8 +17,8 @@
                 <router-link to="/new-account">New Account</router-link>
             </b-navbar-item>
 
-            <b-navbar-item v-if="isDebugMode">
-                <router-link to="/sandbox">Sandbox</router-link>
+            <b-navbar-item v-if="isAdmin">
+                <router-link to="/admin">Admin Panel</router-link>
             </b-navbar-item>
         </template>
 
@@ -81,7 +81,8 @@ export default {
 
     computed: {
         ...mapGetters([
-            'myNotifications'
+            'myNotifications',
+            'isAdmin'
         ]),
 
         unreadNotifications () {

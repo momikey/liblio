@@ -2,6 +2,7 @@ from flask import json, current_app
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
+from enum import Enum
 import re
 
 from sqlalchemy.sql import expression
@@ -58,6 +59,13 @@ class utcnow(expression.FunctionElement):
 def utcnow_pg(element, compiler, **kwargs):
     """UTC timestamps for Postgres"""
     return "TIMEZONE('utc', CURRENT_TIMESTAMP)"
+
+### Roles ###
+
+class Role(Enum):
+    banned = 0
+    admin = 1
+    user = 2
 
 ### Association Tables ###
 
@@ -125,8 +133,11 @@ class Login(db.Model):
     user = db.relationship('User', back_populates='login')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
+    # User role (admin, regular user, etc.)
+    role = db.Column(db.Enum(Role), server_default="user")
+
     def __repr__(self):
-        return "<Login {self.username} / {self.email}>".format(self=self)
+        return "<Login {self.username} ({self.role.name} / {self.email}>".format(self=self)
 
     def set_password(self, pw):
         """Hash a user's password to securely store in the database."""
