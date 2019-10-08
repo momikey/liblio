@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
+import AdminPanel from './views/admin-panel/AdminPanel.vue'
 
 Vue.use(Router)
 
@@ -86,7 +87,36 @@ export default new Router({
         {
             path: '/admin',
             name: 'admin',
-            component: () => import(/* webpackChunkName: "admin" */ './views/AdminPanel.vue')
+            component: AdminPanel,
+            children: [
+                {
+                    path: 'users/:mode',
+                    name: 'admin-users',
+                    component: () => import(/* webpackChunkName: "admin" */ './views/admin-panel/Users.vue'),
+                    props: true
+                },
+                {
+                    path: 'posts/:mode',
+                    name: 'admin-posts',
+                    component: () => import(/* webpackChunkName: "admin" */ './views/admin-panel/Posts.vue'),
+                    props: true
+                },
+                {
+                    path: 'tags',
+                    name: 'admin-tags',
+                    component: () => import(/* webpackChunkName: "admin" */ './views/admin-panel/Tags.vue'),
+                },
+                {
+                    path: 'uploads',
+                    name: 'admin-uploads',
+                    component: () => import(/* webpackChunkName: "admin" */ './views/admin-panel/Uploads.vue'),
+                },
+                {
+                    path: 'settings',
+                    name: 'admin-settings',
+                    component: () => import(/* webpackChunkName: "admin" */ './views/admin-panel/Settings.vue'),
+                },
+            ]
         },
     ]
 })
