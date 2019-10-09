@@ -76,8 +76,9 @@ def create_app():
     jwt.init_app(app)
 
     # Blueprints for API
-    from .api import authentication, posts, user_settings, users, tags
+    from .api import authentication, admin, posts, user_settings, users, tags
     app.register_blueprint(authentication.blueprint)
+    app.register_blueprint(admin.blueprint)
     app.register_blueprint(posts.blueprint)
     app.register_blueprint(user_settings.blueprint)
     app.register_blueprint(users.blueprint)
