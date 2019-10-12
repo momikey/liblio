@@ -13,33 +13,77 @@
 
         <b-table
             :data="data"
-            :columns="columns"
+            ref="table"
             :default-sort="['id','asc']"
             striped
+
+            detailed
+            :show-detail-icon="false"
+            detail-key="id"
+
+            paginated
+            backend-pagination
+            :total="totalPosts"
+            :per-page="perPage"
+            @page-change="onPageChange"
         >
+            <template slot-scope="props">
+                <b-table-column field="id" :label="labels.columns.id" sortable
+                    width="40" numeric centered
+                >
+                    <span @click="toggleRow(props.row)">
+                        {{ props.row.id }}
+                    </span>
+                </b-table-column>
+
+                <b-table-column field="user" :label="labels.columns.user" sortable>
+                    <span @click="toggleRow(props.row)">
+                        {{ props.row.user | formatUser }}
+                    </span>
+                </b-table-column>
+
+                <b-table-column field="subject" :label="labels.columns.subject">
+                    <span @click="toggleRow(props.row)">
+                        {{ props.row.subject | truncate(16) }}
+                    </span>
+                </b-table-column>
+
+                <b-table-column field="content" :label="labels.columns.content">
+                    <span @click="toggleRow(props.row)">
+                        {{ props.row.content | truncate(16) }}
+                    </span>
+                </b-table-column>
+
+                <b-table-column field="flake" :label="labels.columns.flake">
+                    {{ props.row.flake }}
+                </b-table-column>
+
+                <b-table-column field="uri" :label="labels.columns.uri">
+                    {{ props.row.uri }}
+                </b-table-column>
+            </template>
+
+            <template slot="detail" slot-scope="props">
+                <article>
+                    <h1 class="is-title is-size-5 has-text-weight-bold">{{ props.row.subject }}</h1>
+                    <p>
+                        {{ props.row.content }}
+                    </p>
+                </article>
+            </template>
         </b-table>
     </section>
 </template>
 
 <script>
 import PerPageSelect from '@/components/PerPageSelect.vue';
+import { mapGetters } from 'vuex';
 
 export default {
     data () {
         return {
             perPage: 10,
-
-            // TODO: Change to Vuex/API call/whatever
-            data: [
-                {
-                    id: 42,
-                    user: "nobody",
-                    subject: "Filler",
-                    content: "Nothing to see here",
-                    flake: 1234567890,
-                    uri: "https://example.com/posts/abc123"
-                }
-            ],
+            page: 1,
 
             labels: {
                 allPosts: "All posts",
@@ -58,6 +102,13 @@ export default {
         }
     },
 
+    computed: {
+        ...mapGetters({
+            data: 'admin/posts',
+            totalPosts: 'admin/postCount',
+        })
+    },
+
     props: [
         'mode'
     ],
@@ -65,6 +116,23 @@ export default {
     methods: {
         labelFor (column) {
             return this.labels.columns[column];
+        },
+
+        fetchData () {
+            this.$store.dispatch('admin/getPosts', {
+                max: +this.perPage,
+                page: this.page,
+                token: this.$store.getters.accessToken
+            });
+        },
+
+        toggleRow (row) {
+            this.$refs.table.toggleDetails(row);
+        },
+
+        onPageChange (page) {
+            this.page = page;
+            this.fetchData();
         },
 
         /*
@@ -84,7 +152,7 @@ export default {
                 },
                 {
                     label: this.labelFor('user'),
-                    field: "user",
+                    field: "user.display_name",
                     sortable: true
                 },
                 {
@@ -109,8 +177,28 @@ export default {
         }
     },
 
+    filters: {
+        formatUser (user) {
+            return `${user.username}@${user.origin}`;
+        },
+
+        truncate (value, length) {
+            return value.length > length
+                    ? value.substr(0, length) + '...'
+                    : value;
+        }
+    },
+
+    watch: {
+        perPage () {
+            this.page = 1;
+            this.fetchData();
+        }
+    },
+
     mounted () {
         this.setupColumns();
+        this.fetchData();
     },
 
     components: {

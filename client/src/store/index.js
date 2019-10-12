@@ -5,6 +5,7 @@ import VuexPersistence from 'vuex-persist';
 /*
  * Store modules
  */
+import admin from './admin';
 import authentication from './authentication';
 import posts from './posts';
 import profile from './profile';
@@ -23,6 +24,7 @@ const debug = process.env.NODE_ENV !== 'production'
 
 const store = new Vuex.Store({
     modules: {
+        admin,
         authentication,
         posts,
         profile,
