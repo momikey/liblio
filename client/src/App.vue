@@ -91,6 +91,7 @@ $side-panel: #ffeedd;
 .side-panel {
     background-color: #ffeedd;
     padding-top: 32px;
+    overflow: auto;
 }
 
 .parent-link {
@@ -108,6 +109,10 @@ $side-panel: #ffeedd;
 .post-metadata span {
     flex-shrink: 1;
     padding: 0;
+}
+
+.post-metadata span a {
+    padding-left: 0.25rem;
 }
 
 // .is-liked-icon {

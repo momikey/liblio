@@ -1,15 +1,15 @@
 <template>
     <div class="home columns">
-        <div class="column is-two-thirds">
-            <router-view />
-        </div>
-
         <div class="column is-one-third">
             <creator-panel v-if="user"
             />
 
             <login-panel v-else
             />
+        </div>
+        
+        <div class="column is-two-thirds">
+            <router-view />
         </div>
     </div>
 </template>

@@ -13,9 +13,9 @@
                 <span class="post-date card-header-title is-size-7">
                     {{ dateToNow(post.timestamp) }}
                 </span>
-                <span>
+                <span class="card-header-title">
                     <router-link :to="authorLink"
-                        class="card-header-title is-size-7 has-text-right liblio-post-author">
+                        class="card-header-title is-size-7 has-text-right post-author">
                         {{ by(post.user) }}
                     </router-link>
                 </span>
@@ -127,5 +127,4 @@ export default {
 </script>
 
 <style lang="scss">
-
 </style>
