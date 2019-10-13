@@ -27,7 +27,7 @@
             :per-page="perPage"
             @page-change="onPageChange"
         >
-            <template slot-scope="props">
+            <template v-slot="props">
                 <b-table-column field="id" :label="labels.columns.id" sortable
                     width="40" numeric centered
                 >
@@ -63,12 +63,19 @@
                 </b-table-column>
             </template>
 
-            <template slot="detail" slot-scope="props">
-                <article>
-                    <h1 class="is-title is-size-5 has-text-weight-bold">{{ props.row.subject }}</h1>
-                    <p>
-                        {{ props.row.content }}
-                    </p>
+            <template #detail="props">
+                <article class="columns">
+                    <div class="column is-three-quarters">
+                        <h1 class="is-title is-size-5 has-text-weight-bold">{{ props.row.subject }}</h1>
+                        <p>
+                            {{ props.row.content }}
+                        </p>
+                    </div>
+                    <div class="column is-one-quarter">
+                        <b-menu>
+                            <!-- TODO: Add menu items, such as post deletion -->
+                        </b-menu>
+                    </div>
                 </article>
             </template>
         </b-table>
@@ -86,8 +93,8 @@ export default {
             page: 1,
 
             labels: {
-                allPosts: "All posts",
-                localOnly: "Only local posts",
+                allPosts: "Showing all posts",
+                localOnly: "Showing only local posts",
                 columns: {
                     id: "ID",
                     user: "User",
@@ -99,6 +106,8 @@ export default {
             },
 
             columns: [],
+
+            _mode: '',
         }
     },
 
@@ -106,7 +115,11 @@ export default {
         ...mapGetters({
             data: 'admin/posts',
             totalPosts: 'admin/postCount',
-        })
+        }),
+
+        origin () {
+            return this._mode === 'local' ? this.$store.getters.host : undefined;
+        }
     },
 
     props: [
@@ -122,7 +135,8 @@ export default {
             this.$store.dispatch('admin/getPosts', {
                 max: +this.perPage,
                 page: this.page,
-                token: this.$store.getters.accessToken
+                token: this.$store.getters.accessToken,
+                origin: this.mode === 'local' ? this.$store.getters.host : undefined
             });
         },
 
@@ -134,47 +148,6 @@ export default {
             this.page = page;
             this.fetchData();
         },
-
-        /*
-         * We can't access `this` in a data definition, which makes it
-         * much harder to define properly localized labels for columns.
-         * 
-         */
-        setupColumns () {
-            const columns = [
-                {
-                    label: this.labelFor('id'),
-                    field: "id",
-                    width: 40,
-                    numeric: true,
-                    centered: true,
-                    sortable: true
-                },
-                {
-                    label: this.labelFor('user'),
-                    field: "user.display_name",
-                    sortable: true
-                },
-                {
-                    label: this.labelFor('subject'),
-                    field: "subject"
-                },
-                {
-                    label: this.labelFor('content'),
-                    field: "content"
-                },
-                {
-                    label: this.labelFor('flake'),
-                    field: "flake"
-                },
-                {
-                    label: this.labelFor('uri'),
-                    field: "uri"
-                }
-            ];
-
-            this.columns = columns;
-        }
     },
 
     filters: {
@@ -193,11 +166,15 @@ export default {
         perPage () {
             this.page = 1;
             this.fetchData();
+        },
+
+        mode () {
+            this.fetchData();
         }
     },
 
     mounted () {
-        this.setupColumns();
+        this._mode = this.mode;
         this.fetchData();
     },
 
