@@ -113,7 +113,7 @@ def get_users():
         begin = (page - 1) * count
         end = min(begin + count, total_num)
         
-        return jsonify([u.to_dict() for u in users.all()[begin:end]]), 200
+        return jsonify(total=total_num, users=[u.to_dict() for u in users.all()[begin:end]]), 200
     except ValueError:
         raise APIError(422, "Invalid query parameter")
 
@@ -177,6 +177,6 @@ def get_tags():
         begin = (page - 1) * count
         end = min(begin + count, total_num)
         
-        return jsonify([t.to_dict() for t in tags.all()[begin:end]]), 200
+        return jsonify(total=total_num, tags=[t.to_dict() for t in tags.all()[begin:end]]), 200
     except ValueError:
         raise APIError(422, "Invalid query parameter")

@@ -335,6 +335,7 @@ class Tag(db.Model):
 
     def to_dict(self):
         return dict(
+            id=self.id,
             name=self.name,
             description=self.description
         )
