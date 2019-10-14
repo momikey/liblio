@@ -105,8 +105,6 @@ export default {
                 }
             },
 
-            columns: [],
-
             _mode: '',
         }
     },
@@ -127,10 +125,6 @@ export default {
     ],
 
     methods: {
-        labelFor (column) {
-            return this.labels.columns[column];
-        },
-
         fetchData () {
             this.$store.dispatch('admin/getPosts', {
                 max: +this.perPage,
