@@ -115,6 +115,9 @@ $side-panel: #ffeedd;
     padding-left: 0.25rem;
 }
 
+.admin-panel-actions a {
+    color: $info;
+}
 // .is-liked-icon {
 //     color: $liked-icon;
 // }

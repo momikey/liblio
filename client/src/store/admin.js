@@ -107,6 +107,38 @@ export default module = {
                 })
         },
 
+        getUsers ({ state, commit }, options) {
+            const queryParams = {
+                max: options.max,
+                page: options.page,
+                origin: options.origin,
+                sort: options.sort,
+                order: options.order
+            };
+
+            const endpoint = `/api/v1/admin/${options.mode === 'all' ? 'users' : 'accounts'}`;
+            axios.get(endpoint, {
+                params: queryParams,
+                headers: {
+                    'Authorization': `Bearer ${options.token}`
+                }
+            })
+                .then(r => {
+                    commit('setUsers', r.data.users);
+                    commit('setUserCount', r.data.total);
+
+                    return r;
+                })
+                .catch(err => {
+                    Snackbar.open({
+                        message: `Unable to fetch users: ${err.message}`,
+                        type: 'is-danger'
+                    });
+
+                    console.error(err);
+                })
+        },
+
         getTags ({ state, commit }, options) {
             const queryParams = {
                 max: options.max,
