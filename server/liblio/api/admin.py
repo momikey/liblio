@@ -79,7 +79,7 @@ def get_accounts():
         begin = (page - 1) * count
         end = min(begin + count, total_num)
         
-        return jsonify([login_to_dict(l) for l in accounts.all()[begin:end]]), 200
+        return jsonify(total=total_num, users=[login_to_dict(l) for l in accounts.all()[begin:end]]), 200
     except ValueError:
         raise APIError(422, "Invalid query parameter")
 
