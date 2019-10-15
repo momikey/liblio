@@ -84,13 +84,13 @@
 
                 <b-table-column field="userdata.display_name" :label="labels.columns.local.displayName">
                     <span @click="toggleRow(props.row)">
-                        {{ props.row.userdata.display_name }}
+                        {{ props.row.userdata && props.row.userdata.display_name }}
                     </span>
                 </b-table-column>
 
                 <b-table-column field="userdata.private" :label="labels.columns.local.private">
                     <span @click="toggleRow(props.row)">
-                        {{ props.row.userdata.private }}
+                        {{ props.row.userdata && props.row.userdata.private }}
                     </span>
                 </b-table-column>
             </template>
