@@ -28,16 +28,37 @@ def render_content(context):
     else:
         raise ValueError("Can't convert from source type {type}".format(type=content_type))
 
-def create_uri(context):
-    """Create a URI for a local post."""
+def create_uri(context, path_prefix):
+    """Create a URI for any local data with a Flake ID."""
 
     flake = context.get_current_parameters()['flake']
     origin = current_app.config['SERVER_ORIGIN']
     scheme = 'https' if current_app.config['HTTPS_ENABLED'] else 'http'
 
-    path = "post/{id}".format(id=printable_id(flake))
+    path = "{prefix}/{id}".format(prefix=path_prefix, id=printable_id(flake))
 
     return "{scheme}://{origin}/{path}".format(scheme=scheme, origin=origin, path=path)
+
+def create_post_uri(context):
+    """Create a URI for a local post."""
+
+    path_prefix = "post"
+
+    return create_uri(context, path_prefix)
+
+def create_avatar_uri(context):
+    """Create a URI for a user's avatar."""
+
+    path_prefix = current_app.config["AVATARS_URI_DIR"]
+
+    return create_uri(context, path_prefix)
+
+def create_upload_uri(context):
+    """Create a URI for a media upload."""
+
+    path_prefix = current_app.config["MEDIA_URI_DIR"]
+
+    return create_uri(context, path_prefix)
 
 def create_tag_uri(name):
     """Create a local URI for a tag."""
@@ -190,6 +211,18 @@ class User(db.Model):
     # This user's shared posts
     sharing = db.relationship('Post', secondary=shares, back_populates='shares')
 
+    # This user's uploaded media
+    uploads = db.relationship('Upload', back_populates='user')
+
+    # All of this user's avatars
+    avatars = db.relationship('Avatar', back_populates='user')
+
+    # This user's current avatar
+    # Note: This is intentionally a one-way relationship. Avatars don't care
+    # if they're currently in use. Also, it's one-to-one, because a user can
+    # only have one current avatar.
+    current_avatar = db.relationship('Avatar', uselist=False)
+
     # This user' followers/followed users
     followers = db.relationship('User',
         secondary=follows,
@@ -200,9 +233,6 @@ class User(db.Model):
 
     # This user's profile tags
     tags = db.relationship('Tag', secondary=user_tags, back_populates='users')
-
-    # TODO: Roles and tags (these have to be relations, so they can wait until
-    # we actually have the models done)
 
     def __repr__(self):
         return '<User "{self.display_name}" ({self.username}@{self.origin})>'.format(self=self)
@@ -217,7 +247,8 @@ class User(db.Model):
             private=self.private,
             followers=[f.id for f in self.followers],
             following=[f.id for f in self.following],
-            tags=[t.name for t in self.tags]
+            tags=[t.name for t in self.tags],
+            avatar=self.current_avatar
         )
 
 class Post(db.Model):
@@ -258,7 +289,7 @@ class Post(db.Model):
     # This post's URI
     # For local posts, we will generate this. For foreign posts, it will come as
     # the "id" property of the ActivityPub object.
-    uri = db.Column(db.String, nullable=False, default=create_uri)
+    uri = db.Column(db.String, nullable=False, default=create_post_uri)
 
     # This post's timestamp
     # For local posts, this will be generated; foreign posts will provide it.
@@ -347,3 +378,57 @@ class Tag(db.Model):
     def normalize_name(name):
         """Normalize the name of a tag, removing spaces and punctuation."""
         return re.sub(r'\W', '', name).casefold()
+
+class Upload(db.Model):
+    """Any uploaded media."""
+
+    __tablename__ = 'uploads'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # The Flake ID for this upload
+    # We store this to generate filenames and URIs.
+    flake = db.Column(db.BigInteger, nullable=False, default=flake_id)
+
+    # The filename for this upload
+    # This is relative to the uploads directory (UPLOADS_DIR)
+    filename = db.Column(db.String, nullable=False)
+
+    # The original URI for this upload
+    uri = db.Column(db.String, nullable=False, default=create_upload_uri)
+
+    # The MIME type of this upload
+    mimetype = db.Column(db.String, nullable=False)
+
+    # The user who uploaded this media
+    user = db.relationship('User', back_populates="uploads")
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+class Avatar(db.Model):
+    """A user's avatar."""
+
+    __tablename__ = 'avatars'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # This avatar's Flake ID
+    # We keep these to generate filenames in cases where they aren't
+    # provided by the user.
+    flake = db.Column(db.BigInteger, nullable=False, default=flake_id)
+
+    # The URI for this avatar
+    # Note: This can be either local or foreign, and we'll use it when
+    # making ActivityPub objects, actors, etc.
+    uri = db.Column(db.String, nullable=False, default=create_avatar_uri)
+
+    # The local filename for this avatar
+    # This is relative to the uploads directory (UPLOADS_DIR)
+    filename = db.Column(db.String, nullable=False)
+
+    # The user who uploaded this avatar
+    user = db.relationship('User', back_populates="avatars")
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # A timestamp for when the user uploaded the avatar or,
+    # in the case of foreign users, when we last downloaded it.
+    timestamp = db.Column(TIMESTAMP, nullable=False, server_default=utcnow())

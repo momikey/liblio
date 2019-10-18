@@ -47,7 +47,9 @@ def create_app():
         SERVER_ORIGIN = 'localhost:5000',
         HTTPS_ENABLED = False,
         OPEN_REGISTRATIONS = False,
-        UPLOADS_DIR = os.path.join(app.instance_path, "uploads")
+        UPLOADS_DIR = os.path.join(app.instance_path, "uploads"),
+        AVATARS_URI_DIR = 'avatars',
+        MEDIA_URI_DIR = 'media'
     )
 
     # Other config stuff goes here
