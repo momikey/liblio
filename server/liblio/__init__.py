@@ -46,7 +46,8 @@ def create_app():
         JWT_SECRET_KEY='secret',
         SERVER_ORIGIN = 'localhost:5000',
         HTTPS_ENABLED = False,
-        OPEN_REGISTRATIONS = False
+        OPEN_REGISTRATIONS = False,
+        UPLOADS_DIR = os.path.join(app.instance_path, "uploads")
     )
 
     # Other config stuff goes here
@@ -58,11 +59,15 @@ def create_app():
     else:
         app.config.from_pyfile('dev.py', silent=True)
 
-    # Create the instance folder if it doesn't exist
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
+    # Create the instance folder structure if it doesn't exist
+    for path in [
+        app.instance_path,
+        app.config["UPLOADS_DIR"]
+    ]:
+        try:
+            os.makedirs(path)
+        except OSError:
+            pass
     
     # Database and migrations
     # from .models import db
