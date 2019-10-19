@@ -310,6 +310,9 @@ class Post(db.Model):
     # Any tags given to this post
     tags = db.relationship('Tag', secondary=post_tags, back_populates='posts')
 
+    # Any uploads attached to this post
+    uploads = db.relationship('Upload', back_populates='post')
+
     def __repr__(self):
         return '<Post "{subject}" by {user}@{origin}>'.format(
             subject=self.short_subject(),
@@ -391,18 +394,19 @@ class Upload(db.Model):
     flake = db.Column(db.BigInteger, nullable=False, default=flake_id)
 
     # The filename for this upload
-    # This is relative to the uploads directory (UPLOADS_DIR)
+    # This is relative to the uploads directory (UPLOADS_DEFAULT_DEST)
     filename = db.Column(db.String, nullable=False)
 
     # The original URI for this upload
     uri = db.Column(db.String, nullable=False, default=create_upload_uri)
-
-    # The MIME type of this upload
-    mimetype = db.Column(db.String, nullable=False)
-
+    
     # The user who uploaded this media
-    user = db.relationship('User', back_populates="uploads")
+    user = db.relationship('User', back_populates='uploads')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # The post the upload is attached to
+    post = db.relationship('Post', back_populates='uploads')
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
 
 class Avatar(db.Model):
     """A user's avatar."""
@@ -422,7 +426,7 @@ class Avatar(db.Model):
     uri = db.Column(db.String, nullable=False, default=create_avatar_uri)
 
     # The local filename for this avatar
-    # This is relative to the uploads directory (UPLOADS_DIR)
+    # This is relative to the uploads directory (UPLOADS_DEFAULT_DEST)
     filename = db.Column(db.String, nullable=False)
 
     # The user who uploaded this avatar
