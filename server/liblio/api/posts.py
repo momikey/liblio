@@ -5,11 +5,12 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from webargs import fields, validate
 from webargs.flaskparser import use_args
 from datetime import datetime
+from flask_uploads import UploadNotAllowed
 
-from liblio import db, jwt
+from liblio import db, jwt, liblio_uploads
 from liblio.error import APIError
-from liblio.models import Post, User, Login
-from liblio.helpers import decode_printable_id
+from liblio.models import Post, User, Login, Upload
+from liblio.helpers import flake_id, printable_id, decode_printable_id
 from . import API_PATH
 
 BLUEPRINT_PATH="{api}/post".format(api=API_PATH)
@@ -85,7 +86,21 @@ def create_post(args):
     # This does affect the "last active" time
     login.last_action = datetime.now()
 
-    db.session.add(post, login)    
+    db.session.add(post, login)
+
+    # Posts may have attached media, so store that
+    if 'files' in request.files:
+        for f in request.files.getlist('files'):
+            try:
+                fid = flake_id()
+                name_with_id = printable_id(fid) + f.name
+                filename = liblio_uploads.save(f)
+                upload = Upload(flake=fid, filename=filename, user=login.user, post=post)
+                db.session.add(upload)
+            except UploadNotAllowed as error:
+                print(str(error))
+                raise APIError(415, "Can't upload files of this type")
+
     db.session.commit()
 
     return jsonify(post.to_dict()), 201, { 'Location': post.uri }

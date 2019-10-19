@@ -12,6 +12,9 @@ from flask_migrate import Migrate
 from flask_executor import Executor
 from flask_jwt_extended import JWTManager
 
+import flask_uploads
+from flask_uploads import UploadSet, configure_uploads, UploadNotAllowed
+
 from webargs import flaskparser
 
 from werkzeug.exceptions import HTTPException
@@ -27,6 +30,9 @@ jwt = JWTManager()
 parser = flaskparser.FlaskParser()
 
 LIBLIO_VERSION = "0.0.1"
+
+liblio_uploads = UploadSet('media', flask_uploads.DEFAULTS + flask_uploads.AUDIO)
+liblio_avatars = UploadSet('avatars', flask_uploads.IMAGES)
 
 def create_app():
     """
@@ -47,9 +53,10 @@ def create_app():
         SERVER_ORIGIN = 'localhost:5000',
         HTTPS_ENABLED = False,
         OPEN_REGISTRATIONS = False,
-        UPLOADS_DIR = os.path.join(app.instance_path, "uploads"),
+        UPLOADS_DEFAULT_DEST = os.path.join(app.instance_path, "uploads"),
         AVATARS_URI_DIR = 'avatars',
-        MEDIA_URI_DIR = 'media'
+        MEDIA_URI_DIR = 'media',
+        MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     )
 
     # Other config stuff goes here
@@ -64,7 +71,7 @@ def create_app():
     # Create the instance folder structure if it doesn't exist
     for path in [
         app.instance_path,
-        app.config["UPLOADS_DIR"]
+        app.config["UPLOADS_DEFAULT_DEST"]
     ]:
         try:
             os.makedirs(path)
@@ -81,6 +88,10 @@ def create_app():
 
     # JWT authentication
     jwt.init_app(app)
+
+    # Uploads
+    configure_uploads(app, liblio_uploads)
+    configure_uploads(app, liblio_avatars)
 
     # Blueprints for API
     from .api import authentication, admin, posts, user_settings, users, tags

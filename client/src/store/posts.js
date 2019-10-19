@@ -57,20 +57,36 @@ export default module = {
         },
 
         newPost ({ commit, dispatch, getters }, { post, token }) {
-            let body = {
-                subject: post.subject,
-                source: post.body,
-                /* TODO: Tag support */
-                /* tags: post.tags */
-            };
+            /* We have to use FormData because of the attachments. */
+            let body = new FormData();
+
+            body.append('subject', post.subject);
+            body.append('source', post.body);
 
             if (post.parent) {
-                body.parent_id = post.parent;
+                body.append('parent_id', post.parent);
             }
+
+            if (post.uploads) {
+                post.uploads.forEach(e => {
+                    body.append('files', e);
+                });
+            }
+
+            // let bodyJson = {
+            //     subject: post.subject,
+            //     source: post.body,
+            //     /* TODO: Tag support */
+            //     /* tags: post.tags */
+            // };
+
+            // if (post.parent) {
+            //     bodyJson.parent_id = post.parent;
+            // }
 
             axios.post('/api/v1/post/new', body, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
                 }
             })
                 .then(r => {
