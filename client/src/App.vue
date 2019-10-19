@@ -50,6 +50,11 @@ $colors: map-merge($colors, $addColors);
     color: findColorInvert($primary);
 }
 
+/* Use this to clear link color from <a> elements */
+.has-text-main {
+    color: $text;
+}
+
 /* Side panel background color */
 $side-panel: #ffeedd;
 
@@ -104,6 +109,7 @@ $side-panel: #ffeedd;
 
 .post-metadata {
     display: inline-flex;
+    align-items: center;
 }
 
 .post-metadata span {
