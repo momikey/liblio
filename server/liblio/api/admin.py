@@ -98,6 +98,9 @@ def get_accounts():
     accounts = Login.query.order_by(Login.id)
     total_num = accounts.count()
 
+    if total_num == 0:
+        return jsonify(total=0, uploads=[])
+
     try:
         count = int(request.args.get('max', total_num))
         page = int(request.args.get('page', 1))
@@ -127,6 +130,9 @@ def get_users():
 
     users = User.query.order_by(User.id)
     total_num = users.count()
+
+    if total_num == 0:
+        return jsonify(total=0, uploads=[])
 
     try:
         count = int(request.args.get('max', total_num))
@@ -163,6 +169,9 @@ def get_posts():
     posts = Post.query.order_by(Post.id)
     total_num = posts.count()
 
+    if total_num == 0:
+        return jsonify(total=0, uploads=[])
+
     try:
         count = int(request.args.get('max', total_num))
         page = int(request.args.get('page', 1))
@@ -196,6 +205,9 @@ def get_tags():
     tags = Tag.query.order_by(Tag.id)
     total_num = tags.count()
 
+    if total_num == 0:
+        return jsonify(total=0, uploads=[])
+
     try:
         count = int(request.args.get('max', total_num))
         page = int(request.args.get('page', 1))
@@ -225,6 +237,9 @@ def get_media():
     media = Upload.query.order_by(Upload.id)
     total_num = media.count()
 
+    if total_num == 0:
+        return jsonify(total=0, uploads=[])
+
     try:
         count = int(request.args.get('max', total_num))
         page = int(request.args.get('page', 1))
@@ -240,7 +255,7 @@ def get_media():
         raise APIError(422, "Invalid query parameter")
 
 @blueprint.route('/uploads/avatars', methods=('GET',))
-# @jwt_required
+@jwt_required
 def get_avatars():
     """Retrieves avatar metadata for all users known to this server. Can
     use the following query parameters:
@@ -249,10 +264,13 @@ def get_avatars():
     * page: The page of records
     """
 
-    # error_on_unauthorized()
+    error_on_unauthorized()
 
     media = Avatar.query.order_by(Avatar.id)
     total_num = media.count()
+
+    if total_num == 0:
+        return jsonify(total=0, uploads=[])
 
     try:
         count = int(request.args.get('max', total_num))
