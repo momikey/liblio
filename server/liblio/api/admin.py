@@ -8,7 +8,7 @@ from datetime import datetime
 
 from liblio import db, jwt
 from liblio.error import APIError
-from liblio.models import Post, User, Login, Tag, Role
+from liblio.models import Post, User, Login, Tag, Role, Avatar, Upload
 from liblio.helpers import decode_printable_id
 from . import API_PATH
 
@@ -36,6 +36,35 @@ def login_to_dict(login):
         last_action=login.last_action,
         role=login.role.name,
         userdata=login.user.to_dict()
+    )
+
+def upload_to_dict(upload):
+    """Creates a Python dict for an Upload database entity.
+
+    This is an admin-only function that exposes more database information than
+    the method on Upload.
+    """
+    return dict(
+        id=upload.id,
+        flake=upload.flake,
+        filename=upload.filename,
+        uri=upload.uri,
+        uploader=upload.user.to_dict(),
+        post=upload.post.to_dict()
+    )
+
+def avatar_to_dict(avatar):
+    """Creates a Python dict for an Avatar database entity.
+
+    This is an admin-only function that exposes more database information than
+    the method on Avatar.
+    """
+    return dict(
+        id=avatar.id,
+        flake=avatar.flake,
+        uri=avatar.uri,
+        user=avatar.user.to_dict(),
+        timestamp=avatar.timestamp
     )
 
 def error_on_unauthorized():
@@ -178,5 +207,63 @@ def get_tags():
         end = min(begin + count, total_num)
         
         return jsonify(total=total_num, tags=[t.to_dict() for t in tags.all()[begin:end]]), 200
+    except ValueError:
+        raise APIError(422, "Invalid query parameter")
+
+@blueprint.route('/uploads/media', methods=('GET',))
+@jwt_required
+def get_media():
+    """Retrieves metadata for all of this server's uploaded media. Can use
+    the following query parameters:
+
+    * max: The maximum number of records to return
+    * page: The page of records
+    """
+
+    error_on_unauthorized()
+
+    media = Upload.query.order_by(Upload.id)
+    total_num = media.count()
+
+    try:
+        count = int(request.args.get('max', total_num))
+        page = int(request.args.get('page', 1))
+
+        if count <= 0 or page <= 0:
+            raise APIError(422, "Query parameters out of range")
+
+        begin = (page - 1) * count
+        end = min(begin + count, total_num)
+
+        return jsonify(total=total_num, uploads=[upload_to_dict(u) for u in media.all()[begin:end]]), 200
+    except ValueError:
+        raise APIError(422, "Invalid query parameter")
+
+@blueprint.route('/uploads/avatars', methods=('GET',))
+# @jwt_required
+def get_avatars():
+    """Retrieves avatar metadata for all users known to this server. Can
+    use the following query parameters:
+
+    * max: The maximum number of records to return
+    * page: The page of records
+    """
+
+    # error_on_unauthorized()
+
+    media = Avatar.query.order_by(Avatar.id)
+    total_num = media.count()
+
+    try:
+        count = int(request.args.get('max', total_num))
+        page = int(request.args.get('page', 1))
+
+        if count <= 0 or page <= 0:
+            raise APIError(422, "Query parameters out of range")
+
+        begin = (page - 1) * count
+        end = min(begin + count, total_num)
+
+        return jsonify(total=total_num, uploads=[avatar_to_dict(a) for a in media.all()[begin:end]]), 200
     except ValueError:
         raise APIError(422, "Invalid query parameter")
