@@ -342,7 +342,8 @@ class Post(db.Model):
             uri=self.uri,
             parent_id=self.parent_id,
             timestamp=self.timestamp,
-            tags=[t.to_dict() for t in self.tags]
+            tags=[t.to_dict() for t in self.tags],
+            files=[{'uri': file.uri, 'type': file.mimetype} for file in self.uploads]
         )
 
 class Tag(db.Model):
@@ -399,6 +400,11 @@ class Upload(db.Model):
 
     # The original URI for this upload
     uri = db.Column(db.String, nullable=False, default=create_upload_uri)
+
+    # The uploaded media's MIME type
+    # The front end can use this to determine how to display it (e.g., images
+    # will be in an <img> tag, audio/video with a player)
+    mimetype = db.Column(db.String, nullable=False, server_default="application/octet-stream")
     
     # The user who uploaded this media
     user = db.relationship('User', back_populates='uploads')
