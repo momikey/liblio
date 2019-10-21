@@ -25,10 +25,11 @@
             <router-link :to="parentLink" class="parent-link">{{ labels.parent }}</router-link>
         </div>
 
-        <!-- Post image, if available -->
-        <div v-if="post.image" class="card-image">
-            <figure class="image">
-                <!-- Put image here -->
+        <!-- Post images, if available -->
+        <div v-if="images" class="post-image-container">
+            <figure v-for="image in images" :key="image.uri" class="image is-128x128">
+                <!-- TODO: Descriptive text for images, for accessibility reasons -->
+                <img :src="image.uri" class="thumbnail" :alt="image.uri" />
             </figure>
         </div>
 
@@ -39,6 +40,13 @@
                 <!-- TODO: sanitize, format, etc. -->
                 {{ post.content }}
             </div>
+        </div>
+
+        <!-- Post attachments -->
+        <div class="post-attachments">
+            <b-tag v-for="file in attachments" :key="file.uri">
+                <a :href="file.uri" target="_blank">{{ file.uri }}</a>
+            </b-tag>
         </div>
 
         <!-- Post actions -->
@@ -96,6 +104,15 @@ export default {
 
         parentLink () {
             return `/web/post/${this.post.parent_id}`;
+        },
+
+        images () {
+            return this.post.files.filter(e => e.type.startsWith('image'));
+        },
+
+        attachments () {
+            // TODO: Break out into audio, video, etc.
+            return this.post.files.filter(e => !e.type.startsWith('image'));
         }
     },
 

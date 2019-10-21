@@ -121,9 +121,27 @@ $side-panel: #ffeedd;
     padding-left: 0.25rem;
 }
 
+.post-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 8px 1rem;
+}
+
+.post-image-container > * {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
 .admin-panel-actions a {
     color: $info;
 }
+
+.thumbnail {
+    max-width: 100%;
+    max-height: 100%;
+}
+
 // .is-liked-icon {
 //     color: $liked-icon;
 // }
