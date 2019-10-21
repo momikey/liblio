@@ -95,10 +95,10 @@ def create_post(args):
                 fid = flake_id()
                 name_with_id = printable_id(fid) + f.name
                 filename = liblio_uploads.save(f)
-                upload = Upload(flake=fid, filename=filename, user=login.user, post=post)
+                upload = Upload(flake=fid, filename=filename, user=login.user, post=post, mimetype=f.mimetype)
                 db.session.add(upload)
             except UploadNotAllowed as error:
-                print(str(error))
+                print("Upload failed: {0}", str(error))
                 raise APIError(415, "Can't upload files of this type")
 
     db.session.commit()

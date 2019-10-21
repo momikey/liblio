@@ -94,13 +94,15 @@ def create_app():
     configure_uploads(app, liblio_avatars)
 
     # Blueprints for API
-    from .api import authentication, admin, posts, user_settings, users, tags
+    from .api import (authentication, admin, posts, user_settings, users, tags,
+        media)
     app.register_blueprint(authentication.blueprint)
     app.register_blueprint(admin.blueprint)
     app.register_blueprint(posts.blueprint)
     app.register_blueprint(user_settings.blueprint)
     app.register_blueprint(users.blueprint)
     app.register_blueprint(tags.blueprint)
+    app.register_blueprint(media.blueprint)
 
     # Register our custom error handler
     @app.errorhandler(APIError)
