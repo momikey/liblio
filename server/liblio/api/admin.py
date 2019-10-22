@@ -48,6 +48,7 @@ def upload_to_dict(upload):
         id=upload.id,
         flake=upload.flake,
         filename=upload.filename,
+        mimetype=upload.mimetype,
         uri=upload.uri,
         uploader=upload.user.to_dict(),
         post=upload.post.to_dict()

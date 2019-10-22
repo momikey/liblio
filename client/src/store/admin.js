@@ -23,6 +23,9 @@ export default module = {
 
         users: [],
         userCount: 0,
+
+        media: [],
+        mediaCount: 0
     },
 
     getters: {
@@ -34,6 +37,9 @@ export default module = {
 
         users: state => state.users,
         userCount: state => state.userCount,
+
+        media: state => state.media,
+        mediaCount: state => state.mediaCount
     },
 
     mutations: {
@@ -72,6 +78,18 @@ export default module = {
         setUserCount (state, count) {
             state.userCount = count;
         },
+
+        setMedia (state, newMedia) {
+            state.media = newMedia;
+        },
+
+        clearMedia (state) {
+            state.media = [];
+        },
+
+        setMediaCount (state, count) {
+            state.mediaCount = count;
+        }
     },
 
     actions: {
@@ -162,6 +180,36 @@ export default module = {
                 .catch(err => {
                     Snackbar.open({
                         message: `Unable to fetch tags: ${err.message}`,
+                        type: 'is-danger'
+                    });
+
+                    console.error(err);
+                })
+        },
+
+        getMedia ({ state, commit }, options) {
+            const queryParams = {
+                max: options.max,
+                page: options.page,
+                sort: options.sort,
+                order: options.order
+            };
+
+            axios.get('/api/v1/admin/uploads/media', {
+                params: queryParams,
+                headers: {
+                    'Authorization': `Bearer ${options.token}`
+                }
+            })
+                .then(r => {
+                    commit('setMedia', r.data.uploads);
+                    commit('setMediaCount', r.data.total);
+
+                    return r;
+                })
+                .catch(err => {
+                    Snackbar.open({
+                        message: `Unable to fetch uploaded media: ${err.message}`,
                         type: 'is-danger'
                     });
 

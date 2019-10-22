@@ -110,16 +110,6 @@ export default new Router({
                     path: 'uploads',
                     name: 'admin-uploads',
                     component: () => import(/* webpackChunkName: "admin" */ './views/admin-panel/Uploads.vue'),
-                    children: [
-                        {
-                            path: 'uploads/media',
-                            name: 'admin-uploads-media'
-                        },
-                        {
-                            path: 'uploads/avatars',
-                            name: 'admin-uploads-avatars'
-                        }
-                    ]
                 },
                 {
                     path: 'settings',
