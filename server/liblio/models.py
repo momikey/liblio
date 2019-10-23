@@ -8,6 +8,8 @@ import re
 from sqlalchemy.sql import expression
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy.dialects.postgresql import JSONB
 
 from liblio.helpers import flake_id, printable_id
 
@@ -442,3 +444,31 @@ class Avatar(db.Model):
     # A timestamp for when the user uploaded the avatar or,
     # in the case of foreign users, when we last downloaded it.
     timestamp = db.Column(TIMESTAMP, nullable=False, server_default=utcnow())
+
+class Configuration(db.Model):
+    """Server configuration. This is only those parts which can be changed
+    while the server is running. Settings such as ports and directories must
+    be configured before starting the server."""
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Server settings are stored as a JSON object, since keys are all strings,
+    # but data can be strings, numbers, or booleans.
+    # TODO: Check if the server isn't running Postgres, because the JSONB type
+    # we're using is specific to that DB.
+    # TODO: Do we need multiple objects? Possibly for different sets of settings?
+    data = db.Column(MutableDict.as_mutable(JSONB))
+
+    @classmethod
+    def data_object(cls, db):
+        """Return the data object for the first defined configuration. At this time
+        that will be the only configuration."""
+        d = cls.query.first()
+
+        # If there isn't a data object already in the DB, create one and add it.
+        if d is None:
+            d = cls(data={})
+            db.session.add(d)
+            db.session.commit()
+        
+        return d;
