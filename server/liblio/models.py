@@ -315,6 +315,11 @@ class Post(db.Model):
     # Any uploads attached to this post
     uploads = db.relationship('Upload', back_populates='post')
 
+    # Arbitrary metadata that may be attached to a post
+    # (Note that SQLAlchemy won't let us give this a proper name.
+    # There is no valid reason for this.)
+    post_meta = db.Column(MutableDict.as_mutable(JSONB))
+
     def __repr__(self):
         return '<Post "{subject}" by {user}@{origin}>'.format(
             subject=self.short_subject(),
@@ -345,7 +350,8 @@ class Post(db.Model):
             parent_id=self.parent_id,
             timestamp=self.timestamp,
             tags=[t.to_dict() for t in self.tags],
-            files=[{'uri': file.uri, 'type': file.mimetype} for file in self.uploads]
+            files=[{'uri': file.uri, 'type': file.mimetype} for file in self.uploads],
+            metadata=self.post_meta if self.post_meta is not None else {}
         )
 
 class Tag(db.Model):
