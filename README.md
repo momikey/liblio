@@ -32,6 +32,7 @@ These are the bare minimum tasks that need to be finished before Liblio can be c
 * Site settings (This is actually implementing them on the server side.)
 * Remember Me
 * Rate limiting for some API endpoints
+* Database setup for new installs
 
 #### Other
 
