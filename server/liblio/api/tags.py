@@ -44,7 +44,8 @@ def create_tag(args):
 
     tag = Tag(
         name=Tag.normalize_name(args['name']),
-        description=args.get('description')
+        description=args.get('description'),
+        display_name=args['name']
     )
 
     # TODO: Should this affect last activity?

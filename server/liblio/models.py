@@ -369,6 +369,11 @@ class Tag(db.Model):
 
     description = db.Column(db.String, nullable=True)
 
+    # Tag names are "normalized": turned into a format appropriate for
+    # Twitter-style hashtags. But some might prefer to have them displayed
+    # as they were originally entered, so I guess we can store that.
+    display_name = db.Column(db.String, nullable=True)
+
     # Relation properties
     users = db.relationship('User', secondary='user_tags', back_populates='tags')
     posts = db.relationship('Post', secondary='post_tags', back_populates='tags')
@@ -380,7 +385,8 @@ class Tag(db.Model):
         return dict(
             id=self.id,
             name=self.name,
-            description=self.description
+            description=self.description,
+            display_name=self.display_name
         )
 
     def uri(self):
