@@ -52,6 +52,15 @@
             </b-navbar-item>
 
             <b-navbar-item v-if="user">
+                <b-tooltip :label="labels.profile" animated :delay="500"
+                >
+                    <router-link role="button" to="/web/profile">
+                        <b-icon icon="account-circle" />
+                    </router-link>
+                </b-tooltip>
+            </b-navbar-item>
+
+            <b-navbar-item v-if="user">
                 <b-tooltip :label="labels.logout" animated :delay="500"
                 >
                     <a role="button"
@@ -74,6 +83,7 @@ export default {
         return {
             labels: {
                 notifications: "Notifications",
+                profile: "Profile",
                 logout: "Log out"
             }
         }

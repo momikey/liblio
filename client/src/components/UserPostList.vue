@@ -1,11 +1,9 @@
 <template>
     <section class="user-post-list">
         <template v-if="currentUserPosts.length">
-            <div class="section" v-for="post in currentUserPosts" :key="post.id">
-                <creator-post-card
-                    :post="post"
-                />
-            </div>
+            <creator-post-card v-for="post in currentUserPosts" :key="post.id"
+                :post="post"
+            />
         </template>
 
         <template v-else>

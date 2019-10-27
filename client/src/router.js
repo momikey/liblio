@@ -25,7 +25,7 @@ export default new Router({
                 {
                     path: 'user/:userid',
                     name: 'user-profile',
-                    component: () => import(/* webpackChunkName: "home" */ './views/UserPostList.vue'),
+                    component: () => import(/* webpackChunkName: "home" */ './views/UserProfile.vue'),
                     props: true
                 },
 
@@ -47,6 +47,11 @@ export default new Router({
                     path: 'new-post',
                     name: 'new-post',
                     component: () => import(/* webpackChunkName: "home" */ './views/NewPost.vue'),
+                },
+
+                {
+                    path: 'profile',
+                    name: 'my-profile',
                 }
             ]
         },
