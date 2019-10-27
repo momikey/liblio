@@ -8,6 +8,7 @@ import { SnackbarProgrammatic as Snackbar } from "buefy";
 export default module = {
     state: {
         users: [],
+        currentUser: {},
         currentUserPosts: [],
     },
 
@@ -15,6 +16,7 @@ export default module = {
         allUsers: state => state.users,
         visibleUsers: state => state.users.filter(u => !u.private),
         currentUserPosts: state => state.currentUserPosts,
+        currentUser: state => state.currentUser,
     },
 
     mutations: {
@@ -26,6 +28,10 @@ export default module = {
         saveUserPosts (state, posts) {
             // state.currentUserPosts.splice(0, state.currentUserPosts.length, ...posts);
             state.currentUserPosts = posts;
+        },
+
+        saveUser (state, user) {
+            state.currentUser = user;
         }
     },
 
@@ -63,6 +69,25 @@ export default module = {
 
                     Snackbar.open({
                         message: "Couldn't fetch posts for this user: ${err.response.data.message}",
+                        type: 'is-warning'
+                    })
+                })
+        },
+
+        getUser ({ commit, state }, id) {
+            axios.get(`/api/v1/user/by-id/${id}`)
+                .then(r => {
+                    commit('saveUser', r.data);
+
+                    return r;
+                })
+                .catch(err => {
+                    commit('saveUser', {});
+
+                    console.log(err)
+
+                    Snackbar.open({
+                        message: "Couldn't fetch user profile: ${err.response.data.message}",
                         type: 'is-warning'
                     })
                 })

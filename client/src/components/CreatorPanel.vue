@@ -5,7 +5,8 @@
                 <!-- User avatar -->
                 <div class="level-item">
                     <figure class="image is-128x128 creator-avatar-figure">
-                        <img class="is-rounded" src="../assets/logo.png" />
+                        <img class="is-rounded" :src="user.avatar" v-if="user.avatar"/>
+                        <img class="is-rounded" src="../assets/logo.png" v-else />
                     </figure>
                 </div>
             </div>
@@ -22,7 +23,7 @@
 
             <!-- User tags - this component is already in a level -->
             <tag-list
-                :tags="tags"
+                :tags="user.tags"
             />
 
             <div class="create-buttons">
@@ -56,11 +57,6 @@ export default {
                 newPost: 'Make a post',
                 newAnnouncement: 'Show off your work'
             },
-
-            tags: [
-                { key: 'test', value: "Tester" },
-                { key: 'author', value: "Author" }
-            ]
         }
     },
 
