@@ -70,7 +70,7 @@ export default {
         }),
 
         username () {
-            return this.user.name || this.labels.noName;
+            return this.user.display_name || this.labels.noName;
         }
     },
 
