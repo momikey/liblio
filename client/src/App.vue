@@ -142,11 +142,4 @@ $side-panel: #ffeedd;
     max-height: 100%;
 }
 
-// .is-liked-icon {
-//     color: $liked-icon;
-// }
-
-// .is-shared-icon {
-//     color: $shared-icon;
-// }
 </style>

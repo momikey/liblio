@@ -16,7 +16,11 @@
                 <div class="level-item has-text-centered">
                     <div>
                     <h1 class="is-size-4">{{ username }}</h1>
-                    <h2 class="is-size-6">({{ formatAddress() }})</h2>
+                    <h2 class="is-size-6">
+                        <router-link class="has-text-main" :to="myPage">
+                            ({{ formatAddress() }})
+                        </router-link>
+                    </h2>
                     </div>
                 </div>
             </div>
@@ -67,6 +71,10 @@ export default {
 
         username () {
             return this.user.display_name || this.labels.noName;
+        },
+
+        myPage () {
+            return `/web/user/${this.user.id}`;
         }
     },
 

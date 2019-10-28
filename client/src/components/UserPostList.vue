@@ -1,4 +1,8 @@
 <template>
+    <!--
+        TODO: We should find a way to add shares into this, like
+        other platforms do with boosts.
+    -->
     <section class="user-post-list">
         <template v-if="currentUserPosts.length">
             <creator-post-card v-for="post in currentUserPosts" :key="post.id"
