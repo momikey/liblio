@@ -249,7 +249,7 @@ class User(db.Model):
             private=self.private,
             followers=[f.id for f in self.followers],
             following=[f.id for f in self.following],
-            tags=[t.name for t in self.tags],
+            tags=[t.to_dict() for t in self.tags],
             avatar=self.current_avatar
         )
 
