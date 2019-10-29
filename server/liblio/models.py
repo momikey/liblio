@@ -41,6 +41,17 @@ def create_uri(context, path_prefix):
 
     return "{scheme}://{origin}/{path}".format(scheme=scheme, origin=origin, path=path)
 
+def create_user_uri(context):
+    """Create a URI for a local user."""
+
+    prefix = "post"
+    origin = current_app.config['SERVER_ORIGIN']
+    scheme = 'https' if current_app.config['HTTPS_ENABLED'] else 'http'
+
+    path = "{prefix}/{id}".format(prefix=path_prefix, id=context.get_current_paramters()['username'])
+
+    return "{scheme}://{origin}/{path}".format(scheme=scheme, origin=origin, path=path)
+
 def create_post_uri(context):
     """Create a URI for a local post."""
 
@@ -194,6 +205,10 @@ class User(db.Model):
     # The originating server
     origin = db.Column(db.String, nullable=False)
 
+    # The user's actor URI
+    # We use this for ActivityPub stuff, but nothing internal to a server.
+    uri = db.Column(db.String, nullable=False, default=create_user_uri, server_default='')
+
     # The user's "display" name; i.e., how the user wishes to be seen
     # (This can be left blank, in which case the username will be used instead.)
     display_name = db.Column(db.String, nullable=True)
@@ -244,6 +259,7 @@ class User(db.Model):
             id=self.id,
             username=self.username,
             origin=self.origin,
+            uri=self.uri,
             display_name=self.display_name,
             bio=self.bio,
             private=self.private,
