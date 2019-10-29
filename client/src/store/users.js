@@ -10,28 +10,38 @@ export default module = {
         users: [],
         currentUser: {},
         currentUserPosts: [],
+        currentUserFollowers: [],
+        currentUserFollowing: [],
     },
 
     getters: {
         allUsers: state => state.users,
         visibleUsers: state => state.users.filter(u => !u.private),
-        currentUserPosts: state => state.currentUserPosts,
         currentUser: state => state.currentUser,
+        currentUserPosts: state => state.currentUserPosts,
+        currentUserFollowers: state => state.currentUserFollowers,
+        currentUserFollowing: state => state.currentUserFollowing,
     },
 
     mutations: {
         saveUsers (state, users) {
-            // state.users.splice(0, state.users.length, ...u);
             state.users = users;
-        },
-
-        saveUserPosts (state, posts) {
-            // state.currentUserPosts.splice(0, state.currentUserPosts.length, ...posts);
-            state.currentUserPosts = posts;
         },
 
         saveUser (state, user) {
             state.currentUser = user;
+        },
+
+        saveUserPosts (state, posts) {
+            state.currentUserPosts = posts;
+        },
+
+        saveUserFollowers (state, followers) {
+            state.currentUserFollowers = followers;
+        },
+
+        saveUserFollowing (state, following) {
+            state.currentUserFollowing = following;
         }
     },
 
@@ -91,6 +101,44 @@ export default module = {
                         type: 'is-warning'
                     })
                 })
-        }
+        },
+
+        getUserFollowers ({ commit, state }, id) {
+            axios.get(`/api/v1/user/followers/${id}`)
+                .then(r => {
+                    commit('saveUserFollowers', r.data);
+
+                    return r;
+                })
+                .catch(err => {
+                    commit('saveUserFollowers', []);
+
+                    console.log(err)
+
+                    Snackbar.open({
+                        message: "Couldn't fetch followers: ${err.response.data.message}",
+                        type: 'is-warning'
+                    })
+                })
+        },
+
+        getUserFollowing ({ commit, state }, id) {
+            axios.get(`/api/v1/user/following/${id}`)
+                .then(r => {
+                    commit('saveUserFollowing', r.data);
+
+                    return r;
+                })
+                .catch(err => {
+                    commit('saveUserFollowing', []);
+
+                    console.log(err)
+
+                    Snackbar.open({
+                        message: "Couldn't fetch follow list: ${err.response.data.message}",
+                        type: 'is-warning'
+                    })
+                })
+        },
     }
 }

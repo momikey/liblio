@@ -61,9 +61,7 @@
             </div>
         </section>
 
-        <keep-alive>
-            <component :is="showPage" :userid="userid" />
-        </keep-alive>
+        <component :is="showPage" :userid="userid" :key="userid" />
     </section>
 </template>
 
@@ -115,18 +113,27 @@ export default {
 
         showFollowing () {
             this.showPage = 'user-following-list';
+        },
+
+        fetch (id) {
+            this.$store.dispatch('getUser', id);
         }
     },
 
     mounted () {
-        this.$store.dispatch('getUser', this.userid);
+        this.fetch(this.userid);
     },
 
     filters: {
         formatUser (user) {
             return actorAddress(user.username, user.origin);
         }
-    }
+    },
+
+    beforeRouteUpdate(to, from, next) {
+        this.fetch(to.params.userid);
+        next();
+    },
 }
 </script>
 
