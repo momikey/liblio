@@ -67,8 +67,7 @@
             </div>
         </section>
 
-        <router-view :key="userid" :userid="userid" />
-        <!-- <component :is="showPage" :userid="userid" :key="userid" /> -->
+        <router-view :userid="userid" />
     </section>
 </template>
 
@@ -79,8 +78,6 @@ import { actorAddress } from '@/modules/uri';
 export default {
     data () {
         return {
-            showPage: 'user-post-list',
-
             labels: {
                 posts: "Posts",
                 followers: "Followers",
