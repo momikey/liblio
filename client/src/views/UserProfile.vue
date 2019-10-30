@@ -31,25 +31,31 @@
                         <div class="level-item has-text-centered">
                             <div class="profile-data-column">
                                 <p class="heading">{{ labels.posts }}</p>
-                                <p class="title" @click="showPosts">
+                                <router-link tag="p" class="title"
+                                    :to="{ name: 'user-posts' }"
+                                >
                                     {{ currentUserPosts ? currentUserPosts.length : 0 }}
-                                </p>
+                                </router-link>
                             </div>
                         </div>
                         <div class="level-item has-text-centered">
                             <div class="profile-data-column">
                                 <p class="heading">{{ labels.followers }}</p>
-                                <p class="title" @click="showFollowers">
+                                <router-link tag="p" class="title"
+                                    :to="{ name: 'user-followers' }"
+                                >
                                     {{ currentUser.followers.length }}
-                                </p>
+                                </router-link>
                             </div>
                         </div>
                         <div class="level-item has-text-centered">
                             <div class="profile-data-column">
                                 <p class="heading">{{ labels.following }}</p>
-                                <p class="title" @click="showFollowing">
+                                <router-link tag="p" class="title"
+                                    :to="{ name: 'user-following' }"
+                                >
                                     {{ currentUser.following.length }}
-                                </p>
+                                </router-link>
                             </div>
                         </div>
                     </div>
@@ -61,14 +67,12 @@
             </div>
         </section>
 
-        <component :is="showPage" :userid="userid" :key="userid" />
+        <router-view :key="userid" :userid="userid" />
+        <!-- <component :is="showPage" :userid="userid" :key="userid" /> -->
     </section>
 </template>
 
 <script>
-import UserPostList from '@/components/UserPostList.vue';
-import UserFollowersList from '@/components/UserFollowersList.vue';
-import UserFollowingList from '@/components/UserFollowingList.vue';
 import { mapGetters } from 'vuex';
 import { actorAddress } from '@/modules/uri';
 
@@ -96,27 +100,11 @@ export default {
         ])
     },
 
-    components: {
-        UserPostList,
-        UserFollowersList,
-        UserFollowingList
-    },
-
     methods: {
-        showPosts () {
-            this.showPage = 'user-post-list';
-        },
-
-        showFollowers () {
-            this.showPage = 'user-followers-list';
-        },
-
-        showFollowing () {
-            this.showPage = 'user-following-list';
-        },
-
         fetch (id) {
             this.$store.dispatch('getUser', id);
+            this.$store.dispatch('getUserFollowers', this.userid);
+            this.$store.dispatch('getUserFollowing', this.userid); 
         }
     },
 

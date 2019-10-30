@@ -33,10 +33,6 @@ export default {
         })
     },
 
-    mounted () {
-        this.$store.dispatch('getUserFollowing', this.userid);
-    },
-
     components: {
         FollowListEntry,
         TagList

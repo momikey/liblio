@@ -26,7 +26,25 @@ export default new Router({
                     path: 'user/:userid',
                     name: 'user-profile',
                     component: () => import(/* webpackChunkName: "home" */ './views/UserProfile.vue'),
-                    props: true
+                    props: true,
+                    children: [
+                        {
+                            path: '',
+                            alias: 'posts',
+                            name: 'user-posts',
+                            component: () => import(/* webpackChunkName: "home" */ './components/UserPostList.vue'),
+                        },
+                        {
+                            path: 'followers',
+                            name: 'user-followers',
+                            component: () => import(/* webpackChunkName: "home" */ './components/UserFollowersList.vue'),
+                        },
+                        {
+                            path: 'following',
+                            name: 'user-following',
+                            component: () => import(/* webpackChunkName: "home" */ './components/UserFollowingList.vue'),
+                        }
+                    ]
                 },
 
                 {
