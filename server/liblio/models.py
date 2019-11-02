@@ -170,6 +170,9 @@ class Login(db.Model):
     # User role (admin, regular user, etc.)
     role = db.Column(db.Enum(Role), server_default="user")
 
+    # User settings
+    settings = db.Column(MutableDict.as_mutable(JSONB))
+
     def __repr__(self):
         return "<Login {self.username} ({self.role.name} / {self.email}>".format(self=self)
 
