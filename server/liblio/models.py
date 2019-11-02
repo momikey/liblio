@@ -448,6 +448,9 @@ class Upload(db.Model):
     post = db.relationship('Post', back_populates='uploads')
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
 
+    def __repr__(self):
+        return "<Upload {self.filename} ({self.mimetype})>".format(self=self)
+
 class Avatar(db.Model):
     """A user's avatar."""
 
@@ -476,6 +479,9 @@ class Avatar(db.Model):
     # A timestamp for when the user uploaded the avatar or,
     # in the case of foreign users, when we last downloaded it.
     timestamp = db.Column(TIMESTAMP, nullable=False, server_default=utcnow())
+
+    def __repr__(self):
+        return "<Avatar {self.filename} for {self.user}>".format(self=self)
 
 class Configuration(db.Model):
     """Server configuration. This is only those parts which can be changed
