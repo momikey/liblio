@@ -269,7 +269,8 @@ class User(db.Model):
             followers=[f.id for f in self.followers],
             following=[f.id for f in self.following],
             tags=[t.to_dict() for t in self.tags],
-            avatar=self.current_avatar
+            avatar=self.current_avatar,
+            settings=self.login.settings if (self.login is not None and self.login.settings is not None) else {}
         )
 
 class Post(db.Model):
