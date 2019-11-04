@@ -70,6 +70,7 @@ export default new Router({
                 {
                     path: 'profile',
                     name: 'my-profile',
+                    component: () => import(/* webpackChunkName: "home" */ './views/ProfileEditor.vue'),
                 }
             ]
         },

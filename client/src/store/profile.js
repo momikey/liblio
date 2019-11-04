@@ -8,10 +8,12 @@ import { SnackbarProgrammatic as Snackbar } from "buefy";
 export default module = {
     state: {
         profile: {
-            name: '',
+            display_name: '',
             bio: '',
             role: null,
-            tags: []
+            tags: [],
+            avatar: '',
+            settings: {}
         },
         info: {
             likes: [],
@@ -47,10 +49,11 @@ export default module = {
 
         clearProfile (state) {
             state.profile = {
-                name: '',
+                display_name: '',
                 bio: '',
                 role: null,
                 tags: [],
+                settings: {}
             }
         },
 
