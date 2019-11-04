@@ -24,7 +24,9 @@ request_schemas = {
         'bio': fields.Str(),
         'role': fields.Int(missing=0),
         'tags': fields.List(fields.Str()),
-        'private': fields.Boolean(missing=False)
+        'private': fields.Boolean(missing=False),
+        'avatar': fields.Str(),
+        'settings': fields.Dict()
     }
 }
 
