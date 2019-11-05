@@ -29,3 +29,15 @@ def get_media(media_fid):
         return send_file(path)
     else:
         raise APIError(404, "Media not found")
+
+@blueprint.route('avatars/<media_fid>')
+def get_avatar(media_fid):
+    """Get uploaded avatar by its Flake ID."""
+
+    avatar = Avatar.query.filter_by(flake=decode_printable_id(media_fid)).first()
+
+    if avatar is not None:
+        path = liblio_uploads.path(avatar.filename)
+        return send_file(path)
+    else:
+        raise APIError(404, "Media not found")

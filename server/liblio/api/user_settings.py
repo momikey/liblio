@@ -2,14 +2,16 @@
 
 from datetime import datetime
 
-from flask import Blueprint, jsonify, make_response, current_app
+from flask import Blueprint, jsonify, make_response, current_app, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from webargs import fields, validate
 from webargs.flaskparser import use_args
+from flask_uploads import UploadNotAllowed
 
-from liblio import db, jwt
+from liblio import db, jwt, liblio_uploads
 from liblio.error import APIError
-from liblio.models import User, Tag
+from liblio.models import User, Tag, Avatar
+from liblio.helpers import flake_id, printable_id
 from . import API_PATH
 
 BLUEPRINT_PATH="{api}/settings".format(api=API_PATH)
@@ -22,10 +24,8 @@ request_schemas = {
     'edit_profile': {
         'name': fields.Str(),
         'bio': fields.Str(),
-        'role': fields.Int(missing=0),
         'tags': fields.List(fields.Str()),
         'private': fields.Boolean(missing=False),
-        'avatar': fields.Str(),
         'settings': fields.Dict()
     }
 }
@@ -48,7 +48,7 @@ def get_my_profile():
     # Update last activity time
     profile.login.last_action = datetime.now()
 
-    return make_response(jsonify(profile=profile.to_dict()), 200)
+    return make_response(jsonify(profile=profile.to_profile_dict()), 200)
 
 @blueprint.route('/edit-profile', methods=('POST',))
 @jwt_required
@@ -76,7 +76,7 @@ def edit_profile(args):
         profile.bio = new_bio
     
     if new_tags is not None:
-        profile.tags = Tag.query.filter(Tag.name.in_(new_tags))
+        profile.tags = Tag.query.filter(Tag.name.in_(new_tags)).all()
     # TODO: do the same thing for roles and tags, once they're implemented
 
     # This is an API action, so update the activity timestamp
@@ -85,7 +85,7 @@ def edit_profile(args):
     db.session.add(profile)
     db.session.commit()
 
-    return make_response(jsonify(msg="Profile updated"), 200)
+    return make_response(jsonify(profile=profile.to_profile_dict()), 200)
 
 @blueprint.route("/me", methods=('GET',))
 @jwt_required
@@ -110,4 +110,36 @@ def get_my_info():
         following=[f.id for f in profile.following]
     ), 200
 
-### Helper functions
+@blueprint.route("/edit-avatar", methods=('POST',))
+@jwt_required
+def edit_avatar():
+    """Change the avatar of the logged-in user."""
+
+    username = get_jwt_identity()
+    origin = current_app.config['SERVER_ORIGIN']
+
+    profile = User.query.filter_by(username=username, origin=origin).first()
+    if profile is None:
+        # This shouldn't happen, but an attacker could feasibly try to edit
+        # a nonexistent profile.
+        raise APIError(400, "User {username} does not exist on this server".format(username=username))
+
+    # Get the new avatar from the request and put it in the DB
+    if 'avatar' in request.files:
+        for f in request.files.getlist('avatar'):
+            try:
+                fid = flake_id()
+                name_with_id = printable_id(fid) + f.name
+                filename = liblio_uploads.save(f)
+                avatar = Avatar(flake=fid, filename=filename, user=profile)
+                profile.current_avatar = avatar
+
+                db.session.add(avatar, profile)
+                db.session.commit()
+
+                return jsonify(msg="Avatar changed for user {0}".format(profile.username)), \
+                    200, \
+                    { 'Location': avatar.uri }
+            except UploadNotAllowed as error:
+                print("Upload failed: {0}", str(error))
+                raise APIError(415, "Can't upload files of this type")

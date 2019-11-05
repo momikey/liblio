@@ -269,7 +269,17 @@ class User(db.Model):
             followers=[f.id for f in self.followers],
             following=[f.id for f in self.following],
             tags=[t.to_dict() for t in self.tags],
-            avatar=self.current_avatar,
+            avatar=self.current_avatar.uri if self.current_avatar is not None else None,
+            settings=self.login.settings if (self.login is not None and self.login.settings is not None) else {}
+        )
+
+    def to_profile_dict(self):
+        return dict(
+            name=self.display_name,
+            bio=self.bio,
+            private=self.private,
+            tags=[t.to_dict() for t in self.tags],
+            avatar=self.current_avatar.uri if self.current_avatar is not None else None,
             settings=self.login.settings if (self.login is not None and self.login.settings is not None) else {}
         )
 
