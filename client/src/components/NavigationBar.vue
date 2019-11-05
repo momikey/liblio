@@ -23,7 +23,7 @@
         </template>
 
         <template slot="end">
-            <b-navbar-item tag="div">
+            <b-navbar-item tag="div" v-if="user">
                 <b-dropdown
                     position="is-bottom-left"
                 >
