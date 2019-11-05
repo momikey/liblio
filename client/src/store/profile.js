@@ -8,9 +8,8 @@ import { SnackbarProgrammatic as Snackbar } from "buefy";
 export default module = {
     state: {
         profile: {
-            display_name: '',
+            name: '',
             bio: '',
-            role: null,
             tags: [],
             avatar: '',
             settings: {}
@@ -49,10 +48,11 @@ export default module = {
 
         clearProfile (state) {
             state.profile = {
-                display_name: '',
+                name: '',
                 bio: '',
                 role: null,
                 tags: [],
+                avatar: '',
                 settings: {}
             }
         },
@@ -70,6 +70,10 @@ export default module = {
 
         updateShares (state, shares) {
             state.info.shares = shares;
+        },
+
+        updateAvatarUri (state, avatarUri) {
+            state.profile.avatar = avatarUri;
         }
     },
 
@@ -113,6 +117,55 @@ export default module = {
                 .catch(err => {
                     Snackbar.open({
                         message: "Could not retrieve user data",
+                        type: 'is-warning'
+                    });
+
+                    console.log(err);
+                })
+        },
+
+        updateProfile ({ state, commit, rootGetters }, { newProfile, avatarFile }) {
+            axios.post('/api/v1/settings/edit-profile', newProfile, {
+                headers: {
+                    'Authorization': `Bearer ${rootGetters.accessToken}`
+                }
+            })
+                .then(r => {
+                    commit('profile', r.data.profile);
+
+                    if (avatarFile) {
+                        const body = new FormData();
+                        body.append('avatar', avatarFile);
+
+                        axios.post('/api/v1/settings/edit-avatar', body, {
+                            headers: {
+                                'Authorization': `Bearer ${rootGetters.accessToken}`
+                            }
+                        })
+                            .then(ar => {
+                                commit('updateAvatarUri', ar.headers['location']);
+
+                                Snackbar.open({
+                                    message: "Profile updated successfully"
+                                })
+
+                                return ar;
+                            })
+                            .catch(aerr => {
+                                Snackbar.open({
+                                    message: `Could not update avatar: ${aerr}`,
+                                    type: 'is-warning'
+                                });
+            
+                                console.log(aerr);
+                            })
+                    }
+
+                    return r;
+                })
+                .catch(err => {
+                    Snackbar.open({
+                        message: `Could not update profile: ${err}`,
                         type: 'is-warning'
                     });
 
