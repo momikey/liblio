@@ -276,6 +276,7 @@ class User(db.Model):
     def to_profile_dict(self):
         return dict(
             name=self.display_name,
+            origin=self.origin,
             bio=self.bio,
             private=self.private,
             tags=[t.to_dict() for t in self.tags],

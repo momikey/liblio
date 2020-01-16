@@ -114,7 +114,7 @@ export default {
     },
 
     mounted () {
-        this.profile_ = this.profile;
+        this.profile_ = {...this.profile};
     }
 }
 </script>

@@ -9,6 +9,7 @@ export default module = {
     state: {
         profile: {
             name: '',
+            origin: '',
             bio: '',
             tags: [],
             avatar: '',
@@ -49,6 +50,7 @@ export default module = {
         clearProfile (state) {
             state.profile = {
                 name: '',
+                origin: '',
                 bio: '',
                 role: null,
                 tags: [],
