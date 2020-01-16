@@ -4,14 +4,14 @@
             <b-field horizontal :labels="labels.subject">
                 <b-input
                     v-model="post.subject"
-                    :placeholder="labels.placeholder.subject"
+                    :placeholder="labels.placeholders.subject"
                 />
             </b-field>
 
             <b-field horizontal :labels="labels.link">
                 <b-input
                     v-model="post.link"
-                    :placeholder="labels.placeholder.link"
+                    :placeholder="labels.placeholders.link"
                 />
             </b-field>
 
@@ -20,7 +20,7 @@
             <b-field horizontal :labels="labels.body">
                 <b-input
                     v-model="post.body"
-                    :placeholder="labels.placeholder.body"
+                    :placeholder="labels.placeholders.body"
                     type="textarea"
                 />
             </b-field>

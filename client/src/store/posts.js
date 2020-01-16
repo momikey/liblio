@@ -112,6 +112,11 @@ export default module = {
                 })
         },
 
+        newWorkPost ({ commit, dispatch, getters }, { post, token })
+        {
+            // TODO
+        },
+
         likePost ({ commit }, { postId, token }) {
             axios.post(`/api/v1/post/like/${postId}`, {
                 // Likes don't really need a request body, do they?

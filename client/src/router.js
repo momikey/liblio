@@ -68,6 +68,12 @@ export default new Router({
                 },
 
                 {
+                    path: 'new-announcement',
+                    name: 'new-announcement',
+                    component: () => import(/* webpackChunkName: "home" */ './views/NewWorkPost.vue'),
+                },
+
+                {
                     path: 'profile',
                     name: 'my-profile',
                     component: () => import(/* webpackChunkName: "home" */ './views/ProfileEditor.vue'),
