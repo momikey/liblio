@@ -7,9 +7,11 @@ from webargs.flaskparser import use_args
 from datetime import datetime
 from flask_uploads import UploadNotAllowed
 
+import flask.json
+
 from liblio import db, jwt, liblio_uploads
 from liblio.error import APIError
-from liblio.models import Post, User, Login, Upload
+from liblio.models import Post, User, Login, Upload, Tag
 from liblio.helpers import flake_id, printable_id, decode_printable_id
 from . import API_PATH
 
@@ -22,7 +24,9 @@ request_schemas = {
     'new_post': {
         'subject': fields.Str(required=False),
         'source': fields.Str(required=True),
-        'parent_id': fields.Int(required=False)
+        'parent_id': fields.Int(required=False),
+        'metadata': fields.Str(required=False),
+        'tags': fields.List(fields.Str(), required=False)
     }
 }
 
@@ -82,6 +86,18 @@ def create_post(args):
     parent_id = args.get('parent_id')
     if parent_id is not None:
         post.parent_id = parent_id
+
+    meta = args.get('metadata')
+    if meta is not None:
+        mdict = flask.json.loads(meta)
+        post.post_meta = mdict
+
+        # Posts can have tags
+        tags = mdict.get('tags')
+        if tags is not None:
+            for t in tags:
+                tid = Tag.query.filter_by(name=Tag.normalize_name(t)).first()
+                post.tags.append(tid)
 
     # This does affect the "last active" time
     login.last_action = datetime.now()
