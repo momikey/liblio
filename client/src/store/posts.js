@@ -114,7 +114,65 @@ export default module = {
 
         newWorkPost ({ commit, dispatch, getters }, { post, token })
         {
-            // TODO
+            /*
+             * Use FormData because of attachments.
+             * Note that we *will* have at least one attachment in most
+             * work posts, thanks to the cover image feature.
+             */
+
+            let body = new FormData();
+            body.append('subject', post.subject);
+            body.append('source', post.body);
+
+            if (post.cover) {
+                body.append('files', post.cover);
+            }
+
+            if (post.uploads) {
+                post.uploads.forEach(e => {
+                    body.append('files', e);
+                });
+            }
+
+            /*
+             * Works always have metadata, so that the Liblio client will know
+             * to display them differently.
+             */
+            const metadata = {
+                work: true,
+                link: post.link || undefined,
+                tags: post.tags || [],
+                cover: post.cover ? 0 : undefined
+            };
+
+            body.append('metadata', JSON.stringify(metadata));
+
+            axios.post('/api/v1/post/new', body, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            })
+                .then(r => {
+                    if (!post.parent) {
+                        // Top-level post can redirect to the main timeline
+                        router.push("/web");
+                    } else {
+                        // Replies can slot into the thread list
+
+                        if (post.parent === getters.threadParent.id ||
+                            getters.threadChildren.filter(e => post.parent === e.id).length) {
+                                dispatch('getThread', getters.threadParent.id);
+                        }
+                    }
+
+                    return r;
+                })
+                .catch(err => {
+                    Snackbar.open({
+                        message: `Unable to post: ${err.message}`,
+                        type: 'is-danger'
+                    })
+                })
         },
 
         likePost ({ commit }, { postId, token }) {

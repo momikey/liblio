@@ -15,7 +15,6 @@
                 />
             </b-field>
 
-            <!-- TODO: Optional post image -->
             <b-field class="file cover-uploader" grouped position="is-centered">
                 <template v-if="!cover">
                     <b-upload v-model="cover"
@@ -83,7 +82,8 @@ export default {
             post: {
                 subject: '',
                 link: '',
-                body: ''
+                body: '',
+                tags: [],
             },
 
             cover: null,
@@ -123,13 +123,23 @@ export default {
         },
 
         onPost () {
-
+            if (this.post.body) {
+                this.$emit('post-created', {
+                    subject: this.post.subject,
+                    link: this.post.link,
+                    body: this.post.body,
+                    tags: this.post.tags,
+                    cover: this.cover,
+                    uploads: this.uploads
+                });
+            }
         },
 
         onClear () {
             this.post.subject = '';
             this.post.link = '';
             this.post.body = '';
+            this.post.tags = [];
             this.cover = null;
             this.uploads = [];
         }
